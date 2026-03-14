@@ -3,6 +3,15 @@ import { api } from "./axiosInstance";
 
 
 export const loginUser = async (credentials) => {
-  const { data } = await api.post("api/login/", credentials);
-  return data;
+  try {
+
+    const { data } = await api.post("/login/", credentials);
+
+    return data;
+
+  } catch (error) {
+
+    throw error.response?.data || { error: "Login failed" };
+
+  }
 };

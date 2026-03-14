@@ -9,6 +9,8 @@ import ChaseStatements from "./pages/Statement&documents";
 import ProtectedLayout from "./layouts/ProtectedLayout";
 import TransferActivity from "./pages/TranferActivity";
 import CDAccountDashboard from "./pages/CdAccounts";
+import { Toaster } from "react-hot-toast";
+
 
 
 export default function App() {
@@ -16,6 +18,16 @@ export default function App() {
   
   return (
     <BrowserRouter>
+    <Toaster 
+     position="top-center"
+  toastOptions={{
+    style: {
+      marginTop: "40vh",
+      textAlign: "center",
+      padding: "16px 24px",
+      fontSize: "14px",
+    },
+  }} reverseOrder={false} />
       <Routes>
 
         <Route path="/" element={
@@ -25,6 +37,7 @@ export default function App() {
       } />
 
 <Route element={<ProtectedLayout />}>
+
 
         <Route path="/dashboard" element={
           <MainLayout>

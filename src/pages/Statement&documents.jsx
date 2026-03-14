@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { ChevronDown, ChevronRight, FileText, Download } from "lucide-react";
 import { useTransaction } from "../hooks/useTransaction";
 import { useDocuments } from "../hooks/useDocuments";
@@ -92,13 +92,14 @@ export default function ChaseStatements() {
   const [activeSection, setActiveSection] = useState("Statements");
 
   const { data } = useTransaction();
-  console.log(data)
+
   const { data: documents } = useDocuments();
   
-  const accounts =
-  [...new Set(data?.entries?.map((entry) => entry.entry_type))] || [];
+const accounts = useMemo(() => {
+  return [...new Set(data?.transactions?.map(e => e.account_type))] || [];
+}, [data]);
 
-  const section = SECTION_DATA[activeSection];
+const section = useMemo(() => SECTION_DATA[activeSection], [activeSection]);
   
 useEffect(() => {
   if (accounts.length && !activeAccount) {
@@ -108,9 +109,11 @@ useEffect(() => {
 
 
 
-const filteredTransactions = data?.entries?.filter(
-  (entry) => entry.entry_type === activeAccount
-);
+const filteredTransactions = useMemo(() => {
+  return data?.transactions?.filter(
+    (entry) => entry.account_type === activeAccount
+  );
+}, [data, activeAccount]);
 
   return (
     <div className="min-h-screen bg-gray-100 font-sans">
@@ -148,7 +151,7 @@ const filteredTransactions = data?.entries?.filter(
                 <li key={acc}>
                   <button
                     onClick={() => setActiveAccount(acc)}
-                    className={`w-full text-left px-4 py-2.5 text-xs transition-colors ${
+                    className={`w-full text-left px-4 py-2.5 text-[15px] transition-colors ${
                       activeAccount === acc
                         ? "border-l-4 border-[#1a3a6b] text-[#1a3a6b] font-semibold bg-blue-50 pl-3"
                         : "border-l-4 border-transparent text-gray-600 hover:bg-gray-50 hover:text-[#1a3a6b]"
@@ -262,14 +265,15 @@ const filteredTransactions = data?.entries?.filter(
                             Date
                           </th>
                           <th className="text-left py-2 text-gray-500 font-medium">
-                            Type
+                            Account
                           </th>
                          
+                         
                           <th className="text-left py-2 text-gray-500 font-medium">
-                            credit
+                            Type
                           </th>
                           <th className="text-left py-2 text-gray-500 font-medium">
-                            balance
+                            Amount
                           </th>
                         </tr>
                       </thead>
@@ -279,21 +283,22 @@ const filteredTransactions = data?.entries?.filter(
                             key={i}
                             className="border-b border-gray-100 hover:bg-gray-50"
                           >
-                            <td className="py-2.5 text-gray-700">{row.date}</td>
+                            <td className="py-2.5 text-gray-700">
+                               {new Date(row.date).toLocaleDateString("en-IN")}
+                            </td>
+                            <td className="py-2.5 text-gray-700">{row.account_type}({row.account_last4}....)</td>
 
                             <td className="py-2.5 text-gray-700">
-                              {row.entry_type}
+                              {row.type}
                             </td>
 
                            
 
                             <td className="py-2.5 text-gray-700">
-                              ${row.credit || row.debit}
+                              ${row.amount}
                             </td>
 
-                            <td className="py-2.5 text-gray-700">
-                              ${row.balance}
-                            </td>
+                          
                           </tr>
                         ))}
                       </tbody>

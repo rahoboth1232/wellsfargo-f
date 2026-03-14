@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useCreateTransfer, useTransferData } from "../hooks/useTransfer";
+import toast from "react-hot-toast";
 
 function Alert({ type, message }) {
   const styles =
@@ -35,7 +36,7 @@ export default function TransferForm() {
   const [alert, setAlert] = useState(null);
 
   const { data, isLoading } = useTransferData();
-  console.log(data)
+
   const transferMutation = useCreateTransfer();
 
   const [form, setForm] = useState({
@@ -63,10 +64,7 @@ export default function TransferForm() {
 
     transferMutation.mutate(form, {
       onSuccess: () => {
-        setAlert({
-          type: "success",
-          message: "Transfer request submitted successfully"
-        });
+       toast.success("Transfer completed successfully");
 
         setForm({
           action: "internal",
@@ -79,11 +77,7 @@ export default function TransferForm() {
       },
 
       onError: (err) => {
-        setAlert({
-          type: "error",
-          message:
-            err?.response?.data?.error || "Transfer failed"
-        });
+       toast.error( err?.response?.data?.error || "Transfer failed")
       }
     });
   };

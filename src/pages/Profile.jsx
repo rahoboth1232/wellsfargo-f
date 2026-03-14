@@ -61,7 +61,11 @@ export default function ChaseProfileSection() {
   const [editingField, setEditingField] = useState(null);
   const [editValue, setEditValue] = useState("");
 
-  if (isLoading) return <p className="p-6">Loading profile...</p>;
+  // if (isLoading) return <p className="p-6">Loading profile...</p>;
+
+  if(!profile) return <p className="text-center pt-64">No Profile</p>
+
+
 
   const overviewCards = [
     {

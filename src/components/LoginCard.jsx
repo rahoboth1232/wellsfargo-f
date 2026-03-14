@@ -82,7 +82,7 @@ export default function Login() {
 
         {loginMutation.isError && (
           <p className="text-red-600 text-xs">
-            {loginMutation.error?.message || "Login failed"}
+            {loginMutation.error?.error || "Login failed"}
           </p>
         )}
 

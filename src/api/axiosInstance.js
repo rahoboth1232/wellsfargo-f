@@ -15,18 +15,53 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
+
 api.interceptors.response.use(
 
   (response) => response,
 
-  (error) => {
+  async (error) => {
 
-    if (error.response?.status === 401) {
+    const originalRequest = error.config;
 
-      localStorage.removeItem("accessToken");
-      localStorage.removeItem("refreshToken");
+    if (error.response?.status === 401 && !originalRequest._retry) {
 
-      window.location.href = "/";
+      originalRequest._retry = true;
+
+      const refreshToken = localStorage.getItem("refreshToken");
+
+      if (!refreshToken) {
+        window.location.href = "/";
+        return Promise.reject(error);
+      }
+
+      try {
+
+        const res = await axios.post(
+          "http://127.0.0.1:8000/api/token/refresh/",
+          {
+            refresh: refreshToken
+          }
+        );
+
+        const newAccessToken = res.data.access;
+
+        localStorage.setItem("accessToken", newAccessToken);
+
+        originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
+
+        return api(originalRequest);
+
+      } catch (refreshError) {
+
+        localStorage.removeItem("accessToken");
+        localStorage.removeItem("refreshToken");
+
+        window.location.href = "/";
+
+        return Promise.reject(refreshError);
+      }
+
     }
 
     return Promise.reject(error);

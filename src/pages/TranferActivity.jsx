@@ -46,17 +46,16 @@ const StatusBadge = ({ status }) => {
 
 
 export default function TransferActivity() {
-  const { data, isLoading: loading, error } = useTransferData();
-  // Supports both { transfer_requests: [...] } and plain array
+  const { data, isLoading: loading, error } = useTransferData();  
   const transfers = data?.transfer_requests ?? data ?? [];
 
-  console.log(transfers)
 
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("All");
   const [expanded, setExpanded] = useState(null);
 
-  // ── Filter ──
+  
+
   const filtered = transfers.filter((t) => {
     const q = search.toLowerCase();
     const matchSearch =
@@ -68,7 +67,6 @@ export default function TransferActivity() {
     return matchSearch && matchStatus;
   });
 
-  console.log(filtered)
 
   // ── Totals ──
   const totalPending   = filtered.filter((t) => t.status === "pending").reduce((s, t) => s + Number(t.amount), 0);
@@ -157,7 +155,6 @@ export default function TransferActivity() {
           </div>
         </div>
 
-        {/* ── Error state ── */}
         {error && (
           <div className="bg-red-50 border border-red-200 rounded-xl px-5 py-4 text-sm text-red-700 sans mb-4">
             Failed to load transfers: {error}
@@ -176,7 +173,7 @@ export default function TransferActivity() {
             <span className="col-span-2 text-xs font-semibold uppercase tracking-wider text-gray-400 sans text-right pr-6">Amount</span>
           </div>
 
-          {/* Skeletons */}
+  
           {loading && Array.from({ length: 5 }).map((_, i) => (
             <div key={i} className="grid grid-cols-12 items-center px-5 py-4 border-b border-gray-100 gap-3">
               <div className="col-span-1 h-4 skeleton rounded w-6" />
@@ -187,20 +184,18 @@ export default function TransferActivity() {
             </div>
           ))}
 
-          {/* Empty */}
-          {!loading && !error && filtered.length === 0 && (
+            {!loading && !error && filtered.length === 0 && (
             <div className="py-16 text-center text-gray-400 sans text-sm">No transfers found.</div>
           )}
 
-          {/* Rows */}
           {!loading && filtered.map((t, i) => {
             const { date, time } = fmtDate(t.created_at);
             const isExp = expanded === t.id;
 
             return (
-              <div key={t.id} className="border-b border-gray-100 last:border-0">
+              <div key={t.id} className="border-b border-gray-100 last:border-0 ">
                 <div
-                  className="grid grid-cols-12 items-center px-5 py-4 cursor-pointer hover-row transition row-anim"
+                  className="grid grid-cols-12 items-center  px-5 py-4 cursor-pointer hover-row transition row-anim"
                   style={{ animationDelay: `${i * 35}ms` }}
                   onClick={() => setExpanded(isExp ? null : t.id)}
                 >

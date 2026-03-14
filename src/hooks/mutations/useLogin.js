@@ -14,7 +14,7 @@ const navigate = useNavigate()
     mutationFn: loginUser,
 
     onSuccess: (data) => {
-        console.log("LOGIN SUCCESS");
+    
       
       localStorage.setItem("accessToken", data.accessToken);
       localStorage.setItem("refreshToken", data.refreshToken);
