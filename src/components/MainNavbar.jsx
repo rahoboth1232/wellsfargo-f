@@ -75,7 +75,7 @@ export default function ChaseNavbar() {
 
               <div
                 key={item.label}
-                onMouseEnter={() => {
+                onClick={() => {
                   setDropdown(item.label);
                   setActiveNav(item.label);
                 }}

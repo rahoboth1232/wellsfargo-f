@@ -13,6 +13,8 @@ import { useTransferData } from "../hooks/useTransfer";
 import { Link } from "react-router-dom";
 import * as XLSX from "xlsx"
 import { saveAs } from "file-saver";
+import jsPDF from "jspdf";
+import autoTable from "jspdf-autotable";
 
 
 // ── Helpers ──────────────────────────────────────────────
@@ -75,37 +77,36 @@ export default function TransferActivity() {
   const totalPending   = filtered.filter((t) => t.status === "pending").reduce((s, t) => s + Number(t.amount), 0);
   const totalCompleted = filtered.filter((t) => t.status === "approved").reduce((s, t) => s + Number(t.amount), 0);
 
+const handleExportPDF = () => {
+  if (!filtered.length) return;
 
-   const handelExport = () =>{
-    if(!filtered.length) return;
+  const doc = new jsPDF();
 
-    const exportData = filtered.map((t)=>({
-      ID:t.id,
-      From:t.from_account ?? "Your Account",
-      To:t.to_account ?? "Recipent",
-      Amount:t.amount,
-      Status:t.status,
-      Date: new Date(t.created_at).toLocaleDateString(),
-      Time: new Date(t.created_at).toLocaleTimeString(),
-    }))
+  const tableData = filtered.map((t) => {
+    const { date, time } = fmtDate(t.created_at);
 
-    const worksheet = XLSX.utils.json_to_sheet(exportData);
-    const workbook = XLSX.utils.book_new();
+    return [
+      t.id,
+      t.from_account ?? "Your Account",
+      t.to_account ?? "Recipient",
+      `$${Number(t.amount).toLocaleString()}`,
+      t.status,
+      `${date} ${time}`,
+    ];
+  });
 
-    XLSX.utils.book_append_sheet(workbook, worksheet, "Transfers");
-    
-    const excelBuffer = XLSX.write(workbook,{
-      bookType:"xlsx",
-      type:"array",
-    });
+  doc.setFontSize(16);
+  doc.text("Transfer Activity Report", 14, 20);
 
-    const file = new Blob([excelBuffer],{
-      type:"application/vnd.openxmlformats-officedocuments.spreadsheetml.sheet",
-    })
+  autoTable(doc, {
+    startY: 30,
+    head: [["ID", "From Account", "To Account", "Amount", "Status", "Date"]],
+    body: tableData,
+  });
 
-    saveAs(file,"transfer_activity.xlsx");
+  doc.save("transfer_activity.pdf");
+};
 
-   }
   return (
     <div className="min-h-screen bg-gray-50">
       <style>{`
@@ -139,7 +140,7 @@ export default function TransferActivity() {
             </button>
             </Link>
 
-            <button onClick={handelExport} className="flex items-center gap-1.5 text-sm font-medium text-gray-600 border border-gray-200 bg-white px-4 py-2 rounded-md hover:bg-gray-50 transition sans">
+            <button onClick={handleExportPDF} className="flex items-center gap-1.5 text-sm font-medium text-gray-600 border border-gray-200 bg-white px-4 py-2 rounded-md hover:bg-gray-50 transition sans">
               <Download size={14} /> Export
             </button>
           </div>
