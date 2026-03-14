@@ -10,6 +10,9 @@ import {
   RefreshCw,
 } from "lucide-react";
 import { useTransferData } from "../hooks/useTransfer";
+import { Link } from "react-router-dom";
+import * as XLSX from "xlsx"
+import { saveAs } from "file-saver";
 
 
 // ── Helpers ──────────────────────────────────────────────
@@ -72,6 +75,37 @@ export default function TransferActivity() {
   const totalPending   = filtered.filter((t) => t.status === "pending").reduce((s, t) => s + Number(t.amount), 0);
   const totalCompleted = filtered.filter((t) => t.status === "approved").reduce((s, t) => s + Number(t.amount), 0);
 
+
+   const handelExport = () =>{
+    if(!filtered.length) return;
+
+    const exportData = filtered.map((t)=>({
+      ID:t.id,
+      From:t.from_account ?? "Your Account",
+      To:t.to_account ?? "Recipent",
+      Amount:t.amount,
+      Status:t.status,
+      Date: new Date(t.created_at).toLocaleDateString(),
+      Time: new Date(t.created_at).toLocaleTimeString(),
+    }))
+
+    const worksheet = XLSX.utils.json_to_sheet(exportData);
+    const workbook = XLSX.utils.book_new();
+
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Transfers");
+    
+    const excelBuffer = XLSX.write(workbook,{
+      bookType:"xlsx",
+      type:"array",
+    });
+
+    const file = new Blob([excelBuffer],{
+      type:"application/vnd.openxmlformats-officedocuments.spreadsheetml.sheet",
+    })
+
+    saveAs(file,"transfer_activity.xlsx");
+
+   }
   return (
     <div className="min-h-screen bg-gray-50">
       <style>{`
@@ -99,10 +133,13 @@ export default function TransferActivity() {
             </p>
           </div>
           <div className="flex gap-2">
+            <Link to="/transfer">
             <button className="flex items-center gap-1.5 text-sm font-medium text-blue-700 border border-blue-200 bg-white px-4 py-2 rounded-md hover:bg-blue-50 transition sans">
               <RefreshCw size={14} /> New Transfer
             </button>
-            <button className="flex items-center gap-1.5 text-sm font-medium text-gray-600 border border-gray-200 bg-white px-4 py-2 rounded-md hover:bg-gray-50 transition sans">
+            </Link>
+
+            <button onClick={handelExport} className="flex items-center gap-1.5 text-sm font-medium text-gray-600 border border-gray-200 bg-white px-4 py-2 rounded-md hover:bg-gray-50 transition sans">
               <Download size={14} /> Export
             </button>
           </div>

@@ -219,6 +219,8 @@ const CreditJourney = React.memo(() => (
 export default function ChaseDashboard() {
   const { data: accounts, isLoading, isError } = useDashboard();
 
+  console.log(accounts)
+
   if (isLoading) return <p>Loading...</p>;
   if (isError) return <p>Error loading dashboard</p>;
 

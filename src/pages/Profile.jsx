@@ -87,9 +87,9 @@ export default function ChaseProfileSection() {
   ];
 
   const personalFields = [
-    { label: "Full Name", value: profile?.full_name, key: "email", editable: true },
+    { label: "Full Name", value: profile?.full_name, key: "full_name", editable: true },
     { label: "Email address", value: profile?.email, key: "email", editable: true },
-    { label: "Phone number", value: profile?.mobile, key: "phone", editable: true },
+    { label: "Phone number", value: profile?.mobile, key: "mobile", editable: true },
     { label: "Mailing address", value: profile?.address, key: "address", editable: true }
   ];
 

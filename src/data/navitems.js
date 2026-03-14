@@ -4,7 +4,8 @@ export const navItems = [
     tabs: [
       { label: "Overview", path: "/dashboard" },
       { label: "Statements & Documents", path: "/statement&documents" },
-      { label: "Profile & Settings", path: "/profile" }
+      { label: "Profile & Settings", path: "/profile" },
+      { label: "CD/accounts", path: "/cdAccounts" }
     ]
   },
   {
@@ -33,5 +34,6 @@ export const navItems = [
   {
     label: "Explore Products",
     tabs: []
-  }
+  },
+
 ];
