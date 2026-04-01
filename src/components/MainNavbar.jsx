@@ -18,7 +18,8 @@ export default function ChaseNavbar() {
 
   const handleLogout = () => {
     localStorage.removeItem("token");
-    navigate("/");
+   const loginPage = localStorage.getItem("loginPage");
+    navigate(loginPage);
   };
 
   const activeTabs =

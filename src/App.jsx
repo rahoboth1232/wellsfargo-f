@@ -10,6 +10,7 @@ import ProtectedLayout from "./layouts/ProtectedLayout";
 import TransferActivity from "./pages/TranferActivity";
 import CDAccountDashboard from "./pages/CdAccounts";
 import { Toaster } from "react-hot-toast";
+import SignIn from "./pages/SignIn";
 
 
 
@@ -36,6 +37,11 @@ export default function App() {
           </HomeLayout>
       } />
 
+      
+        <Route path="/signin" element={
+          <SignIn/>
+        } />
+
 <Route element={<ProtectedLayout />}>
 
 
@@ -45,6 +51,7 @@ export default function App() {
           </MainLayout>
           
         } />
+
         <Route path="/Profile" element={
           <MainLayout>
 
@@ -82,6 +89,7 @@ export default function App() {
           </MainLayout>
           
         } />
+        
 
         </Route>
       </Routes>

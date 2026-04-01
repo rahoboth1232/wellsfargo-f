@@ -219,15 +219,13 @@ const CreditJourney = React.memo(() => (
 export default function ChaseDashboard() {
   const { data: accounts, isLoading, isError } = useDashboard();
 
-  console.log(accounts)
-
   if (isLoading) return <p>Loading...</p>;
   if (isError) return <p>Error loading dashboard</p>;
 
   return (
     <div className="min-h-screen bg-gray-100 font-sans">
       <div className="max-w-5xl mx-auto px-4 py-4 flex gap-4">
-        {/* Left column */}
+        
         <div className="flex-1 min-w-0">
           {accounts?.map((account) => (
             <AccountCard key={account.id} account={account} />

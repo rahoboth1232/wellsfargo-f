@@ -23,6 +23,10 @@ export default function Login() {
   const handleSubmit = (e) => {
     e.preventDefault();
 
+
+  localStorage.setItem("loginPage", window.location.pathname);
+
+
     loginMutation.mutate({
       username: form.username,
       password: form.password

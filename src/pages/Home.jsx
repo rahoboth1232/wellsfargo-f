@@ -2,24 +2,25 @@ import { useState } from "react";
 import { TopNav } from "../components/HomeNavbar";
 import LoginCard from "../components/LoginCard";
 import landingImg from "../assets/home.webp"
+import { BriefcaseBusiness, BusIcon, ChessKing, CreditCard, Home, HomeIcon, Plane, SaveIcon, User, UserIcon } from "lucide-react";
 
-
-/* ─── Mock Data ─── */
 
 
 const ICONS = [
-  { icon: "💼", label: "Business" },
-  { icon: "💳", label: "Credit cards" },
-  { icon: "👛", label: "Checking" },
-  { icon: "✈️", label: "Travel" },
-  { icon: "🐷", label: "Savings" },
-  { icon: "🏠", label: "Home loans" },
+  { icon: <BriefcaseBusiness  />, label: "Business" },
+  { icon: <CreditCard/>, label: "Credit cards" },
+  { icon: <ChessKing/>, label: "Checking" },
+  { icon: <Plane/>, label: "Travel" },
+  { icon: <SaveIcon/>, label: "Savings" },
+  { icon: <Home/>, label: "Home loans" },
 ];
+
+
 
 const CARDS = [
   {
     title: "Sapphire Reserve®",
-    icon: "💳",
+    icon: <CreditCard/>,
     blue: true,
     badge: "Exclusive Offer:",
     headline: "Up to 175,000 points",
@@ -29,7 +30,7 @@ const CARDS = [
   },
   {
     title: "Home Lending",
-    icon: "🏠",
+    icon: <HomeIcon/>,
     blue: true,
     badge: "Guaranteed on-time closing",
     headline: "Or get $5,000",
@@ -39,7 +40,7 @@ const CARDS = [
   },
   {
     title: "J.P. Morgan",
-    icon: "👥",
+    icon: <UserIcon/>,
     blue: false,
     badge: "Don't go it alone",
     headline: "",

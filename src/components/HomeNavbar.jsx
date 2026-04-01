@@ -1,3 +1,4 @@
+import { Search } from "lucide-react";
 import navImage from "../assets/image.png"
 
 
@@ -16,7 +17,7 @@ export  function TopNav() {
         </nav>
         <div className="flex items-center gap-5 text-sm text-gray-700">
           <span className="hover:text-[#005eb8] cursor-pointer transition-colors">Customer service</span>
-          <span className="text-lg cursor-pointer hover:text-[#005eb8] transition-colors">🔍</span>
+          <span className="text-lg cursor-pointer hover:text-[#005eb8] transition-colors"><Search/></span>
         </div>
       </div>
 

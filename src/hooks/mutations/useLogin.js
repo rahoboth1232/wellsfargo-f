@@ -7,7 +7,7 @@ import { useNavigate } from "react-router-dom";
 
 export const useLogin = () => {
 const navigate = useNavigate()
-  const dispatch = useDispatch();
+const dispatch = useDispatch();
 
   return useMutation({
 
@@ -15,7 +15,7 @@ const navigate = useNavigate()
 
     onSuccess: (data) => {
     
-      
+      localStorage.setItem("loginPage", window.location.pathname)
       localStorage.setItem("accessToken", data.accessToken);
       localStorage.setItem("refreshToken", data.refreshToken);
       
@@ -28,4 +28,4 @@ const navigate = useNavigate()
     }
 
   });
-};
+}

@@ -102,6 +102,10 @@ export default function CDAccountDashboard() {
     return matchQ && matchF;
   });
 
+   if(loading) return <p>loading</p>
+
+
+
   return (
     <div style={{ fontFamily: "'Palatino Linotype', Georgia, serif", background: "#f0f4f8", minHeight: "100vh" }}>
 
@@ -118,6 +122,7 @@ export default function CDAccountDashboard() {
             display: "flex", alignItems: "center", justifyContent: "space-between",
             background: "#fafbff",
           }}>
+            
             <div>
               <h2 style={{ margin: 0, fontSize: 16, fontWeight: 700, color: "#0a2342" }}>
                 Account Registry
