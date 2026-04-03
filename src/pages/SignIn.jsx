@@ -1,6 +1,7 @@
 import { useState } from "react";
 import logo from "../assets/image-copy.png"
 import { useLogin } from "../hooks/mutations/useLogin";
+import {Helmet} from "react-helmet-async"
 
 const FB  = () => <i className="fa-brands fa-square-facebook" />;
 const IG  = () => <i className="fa-brands fa-instagram" />;
@@ -60,7 +61,10 @@ export default function SignIn() {
 
   return (
     <>
-      {/* Font Awesome */}
+      <Helmet>
+        <title>Sign in - Chase.com</title>
+      </Helmet>
+
       <link
         rel="stylesheet"
         href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
