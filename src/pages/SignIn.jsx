@@ -119,7 +119,7 @@ export default function SignIn() {
                   <label className="block text-sm text-gray-800 mb-1">Password</label>
                   <input
                     name="password"
-          type="password"
+          type={showPass ? "text" : "password"} 
           placeholder="Password"
           value={form.password}
           onChange={handleChange}

@@ -92,6 +92,7 @@ export default function ChaseStatements() {
   const [activeSection, setActiveSection] = useState("Statements");
 
   const { data } = useTransaction();
+  console.log(data);
 
   const { data: documents } = useDocuments();
   

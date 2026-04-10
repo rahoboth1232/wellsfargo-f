@@ -9,10 +9,19 @@ import {
 } from "lucide-react";
 import { useDashboard } from "../hooks/useDashboard";
 import { Link } from "react-router-dom";
+import toast from "react-hot-toast";
 
 /* ───────── Account Card ───────── */
 function AccountCard({ account }) {
   const [open, setOpen] = useState(false);
+  const [showModal, setShowModal] = useState(false);
+const [method, setMethod] = useState("");
+const [message, setMessage] = useState("");
+
+const handelsubmit = ()=>{
+  toast.success("sent successfully")
+  setShowModal(false)
+}
 
   const formattedDate = useMemo(
     () =>
@@ -30,9 +39,12 @@ function AccountCard({ account }) {
         <div className="flex items-start justify-between">
           <div>
             <div className="flex items-center gap-1 mb-1">
-              <span className="text-xs font-semibold text-[#003087] hover:underline cursor-pointer">
-                {account.account_type}
-              </span>
+           <span
+  onClick={() => setShowModal(true)}
+  className="text-xs font-semibold text-[#003087] hover:underline cursor-pointer"
+>
+  ({account.account_type}) <span>encrypted account</span>
+</span>
               <ChevronRight size={12} className="text-[#003087]" />
             </div>
 
@@ -88,6 +100,77 @@ function AccountCard({ account }) {
           </div>
         </div>
       </div>
+
+{showModal && (
+  <div className="fixed inset-0 bg-black/40 flex justify-center items-center z-50">
+    
+    <div className="bg-white w-[320px] rounded-xl shadow-xl p-5 relative animate-fadeIn">
+
+      {/* ❌ Close button (top-right) */}
+      <button
+        onClick={() => setShowModal(false)}
+        className="absolute top-3 right-3 text-gray-400 hover:text-gray-600"
+      >
+        ✕
+      </button>
+
+      {/* ✅ Image */}
+      <img
+        src={`http://localhost:8000${account.images}`}
+        alt="account"
+        className="w-36 mx-auto mb-4 rounded-lg border"
+      />
+
+      {/* ✅ Title */}
+      <h3 className="text-sm font-semibold text-gray-800 text-center mb-3">
+        Send to
+      </h3>
+
+      {/* ✅ Options */}
+      <div className="space-y-2 mb-4">
+        
+        <label className="flex items-center justify-between border rounded px-3 py-2 cursor-pointer hover:bg-gray-50">
+          <span className="text-sm">Email</span>
+          <input
+            type="radio"
+            value="email"
+            checked={method === "email"}
+            onChange={(e) => setMethod(e.target.value)}
+          />
+        </label>
+
+        <label className="flex items-center justify-between border rounded px-3 py-2 cursor-pointer hover:bg-gray-50">
+          <span className="text-sm">Phone</span>
+          <input
+            type="radio"
+            value="phone"
+            checked={method === "phone"}
+            onChange={(e) => setMethod(e.target.value)}
+          />
+        </label>
+
+      </div>
+
+      {/* ✅ Button */}
+      <button
+     
+        onClick={handelsubmit}
+        className="w-full bg-[#003087] text-white py-2 rounded text-sm font-semibold hover:bg-[#002070]"
+      >
+        Send 
+      </button>
+
+      {/* ✅ Message */}
+      {message && (
+        <p className="text-xs text-center text-gray-600 mt-3">
+          {message}
+        </p>
+      )}
+
+    </div>
+  </div>
+)}
+
     </div>
   );
 }
@@ -218,6 +301,7 @@ const CreditJourney = React.memo(() => (
 /* ───────── Root Dashboard ───────── */
 export default function ChaseDashboard() {
   const { data: accounts, isLoading, isError } = useDashboard();
+  console.log(accounts)
 
   if (isLoading) return <p>Loading...</p>;
   if (isError) return <p>Error loading dashboard</p>;

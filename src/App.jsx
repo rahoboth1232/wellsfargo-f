@@ -11,6 +11,7 @@ import TransferActivity from "./pages/TranferActivity";
 import CDAccountDashboard from "./pages/CdAccounts";
 import { Toaster } from "react-hot-toast";
 import SignIn from "./pages/SignIn";
+import SignUp from "./pages/SignUp";
 
 
 
@@ -27,6 +28,7 @@ export default function App() {
       textAlign: "center",
       padding: "16px 24px",
       fontSize: "14px",
+      animationDuration:"1000ms"
     },
   }} reverseOrder={false} />
       <Routes>
@@ -41,6 +43,8 @@ export default function App() {
         <Route path="/signin" element={
           <SignIn/>
         } />
+
+        <Route path="signup" element={<SignUp/>}/>
 
 <Route element={<ProtectedLayout />}>
 

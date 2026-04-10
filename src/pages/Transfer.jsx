@@ -48,7 +48,7 @@ export default function TransferForm() {
     date: ""
   });
 
-  if (isLoading) return <p>Loading...</p>;
+  // if (isLoading) return <p>Loading...</p>;
 
   const handleChange = (e) => {
     const { id, value } = e.target;
@@ -65,7 +65,6 @@ export default function TransferForm() {
     transferMutation.mutate(form, {
       onSuccess: () => {
        toast.success("Transfer completed successfully");
-
         setForm({
           action: "internal",
           from_account: "",

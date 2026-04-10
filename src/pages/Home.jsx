@@ -3,6 +3,7 @@ import { TopNav } from "../components/HomeNavbar";
 import LoginCard from "../components/LoginCard";
 import landingImg from "../assets/home.webp"
 import { BriefcaseBusiness, BusIcon, ChessKing, CreditCard, Home, HomeIcon, Plane, SaveIcon, User, UserIcon } from "lucide-react";
+import { Link } from "react-router-dom";
 
 
 
@@ -69,12 +70,12 @@ function HeroSection({ onLogin, loginError }) {
           <p className="text-blue-100 text-base mb-6">
             Open a Chase Total Checking® account with qualifying activities
           </p>
-          <a
-            href="#"
+          <Link
+             to="/signup"
             className="inline-block bg-[#1f8f3c] hover:bg-[#177032] text-white px-3 py-2 rounded font-semibold text-[18px] transition-colors"
           >
             Open an account
-          </a>
+          </  Link>
         </div>
 
         {/* Right: login */}
