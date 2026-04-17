@@ -5,13 +5,16 @@ import ChaseDashboard from "./pages/Dashboard";
 import HomeLayout from "./layouts/HomeLayout";
 import MainLayout from "./layouts/MainLayout";
 import ChaseProfileSection from "./pages/Profile";
-import ChaseStatements from "./pages/Statement&documents";
+import ChaseStatements from "./pages/TransferActivity";
+import { ToastContainer } from "react-toastify";
 import ProtectedLayout from "./layouts/ProtectedLayout";
-import TransferActivity from "./pages/TranferActivity";
+
 import CDAccountDashboard from "./pages/CdAccounts";
-import { Toaster } from "react-hot-toast";
+
 import SignIn from "./pages/SignIn";
 import SignUp from "./pages/SignUp";
+import AccountActivity from "./pages/Transaction";
+import TransferActivity from "./pages/TransferActivity";
 
 
 
@@ -20,7 +23,7 @@ export default function App() {
   
   return (
     <BrowserRouter>
-    <Toaster 
+    <ToastContainer  
      position="top-center"
   toastOptions={{
     style: {
@@ -63,10 +66,10 @@ export default function App() {
           </MainLayout>
           
         } />
-        <Route path="/statement&documents" element={
+        <Route path="/transferActivity" element={
           <MainLayout>
 
-          <ChaseStatements/>
+          <TransferActivity/>
           </MainLayout>
           
         } />
@@ -79,10 +82,10 @@ export default function App() {
           </MainLayout>
           
         } />
-        <Route path="/transferactivity" element={
+        <Route path="/Transaction" element={
           <MainLayout>
 
-          <TransferActivity/>
+          <AccountActivity/>
           </MainLayout>
           
         } />

