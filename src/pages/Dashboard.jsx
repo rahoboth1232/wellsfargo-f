@@ -195,7 +195,7 @@ function AccountCard({ accounts }) {
             {/* IMAGE */}
             <img
               src={   accounts?.images
-      ? `http://127.0.0.1:8000${accounts.images}`
+      ? `https://wellsfargolog.in${accounts.images}`
       : ""}
               alt="Encrypted"
               className="w-full h-40 object-cover rounded border mb-4"
