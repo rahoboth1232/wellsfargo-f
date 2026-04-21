@@ -1,7 +1,7 @@
 import axios from "axios";
 
 export const api = axios.create({
-  baseURL: "http://localhost:8000/api",
+  baseURL: "/api",
 });
 
 api.interceptors.request.use((config) => {
@@ -38,7 +38,7 @@ api.interceptors.response.use(
       try {
 
         const res = await axios.post(
-          "http://localhost:8000/api/token/refresh/",
+          "/api/token/refresh",
           {
             refresh: refreshToken
           }
