@@ -45,6 +45,7 @@ function Breadcrumb() {
 function AccountCard({ accounts }) {
   const [menuOpen, setMenuOpen] = useState(false);
   const [showPopup, setShowPopup] = useState(false);
+  const [showBranchAddress, setShowBranchAddress] = useState(false);
   const [selectedOption, setSelectedOption] = useState("email");
   const [loading, setLoading] = useState(false);
 
@@ -93,25 +94,50 @@ function AccountCard({ accounts }) {
       <div className="flex items-center justify-between bg-white px-5 py-4 border-l-4 border-red-700">
         {/* LEFT */}
         <div className="flex items-center gap-4">
-          <div className="w-10 h-8 bg-gray-200 rounded flex items-center justify-center">
-            <svg viewBox="0 0 40 28" width="36" height="26">
-              <rect width="40" height="28" rx="3" fill="#e5e7eb" />
-              <rect x="4" y="8" width="12" height="8" rx="1" fill="#9ca3af" />
-              <rect x="20" y="12" width="16" height="2" rx="1" fill="#9ca3af" />
-              <rect x="20" y="16" width="10" height="2" rx="1" fill="#9ca3af" />
-            </svg>
-          </div>
+  <div className="w-10 h-8 bg-gray-200 rounded flex items-center justify-center">
+    <svg viewBox="0 0 40 28" width="36" height="26">
+      <rect width="40" height="28" rx="3" fill="#e5e7eb" />
+      <rect x="4" y="8" width="12" height="8" rx="1" fill="#9ca3af" />
+      <rect x="20" y="12" width="16" height="2" rx="1" fill="#9ca3af" />
+      <rect x="20" y="16" width="10" height="2" rx="1" fill="#9ca3af" />
+    </svg>
+  </div>
 
-          <div>
-            <Link
-              to="/account-details"
-              className="text-teal-700 font-semibold text-sm hover:underline uppercase tracking-wide"
-            >
-              {accounts?.account_type} (...{accounts?.account_number?.slice(-4)}
-              )
-            </Link>
-          </div>
-        </div>
+  <div>
+    <Link
+      to="/Transaction"
+      className="text-teal-700 font-semibold text-sm hover:underline uppercase tracking-wide"
+    >
+      {accounts?.account_type} (...{accounts?.account_number?.slice(-4)})
+    </Link>
+
+    <button
+      onClick={() => setShowBranchAddress(!showBranchAddress)}
+      className="block text-xs text-teal-700 hover:underline mt-1"
+    >
+      {showBranchAddress ? "less" : "more"}
+    </button>
+
+    {showBranchAddress && (
+      <div className="mt-2 text-xs text-gray-700 space-y-1 bg-gray-50 border rounded p-3 w-72">
+        <p>
+          <span className="font-semibold">Account Number:</span>{" "}
+          {accounts?.account_number}
+        </p>
+
+        <p>
+          <span className="font-semibold">Routing Number:</span>{" "}
+          {accounts?.routing_number}
+        </p>
+
+        <p>
+          <span className="font-semibold">Branch Address:</span>{" "}
+          {accounts?.branch_address}
+        </p>
+      </div>
+    )}
+  </div>
+</div>
 
         {/* RIGHT */}
         <div className="flex items-center gap-4 relative" ref={menuRef}>
